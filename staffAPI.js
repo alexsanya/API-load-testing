@@ -7,7 +7,7 @@ const StaffAPI = {
 
   inviteUser(companyData, userData) {
     return Q.resolve(userData);
-  }
-}
+  },
+};
 
 export default StaffAPI;

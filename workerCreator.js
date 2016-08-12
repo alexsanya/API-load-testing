@@ -1,7 +1,6 @@
 import staffAPI from './staffAPI';
 import contentProvider from './contentProvider';
 import getMessageQueue from './messageQueue';
-import Q from './node_modules/q';
 import throng from './node_modules/throng';
 import logger from './node_modules/logfmt';
 
@@ -15,18 +14,18 @@ class WorkerCreator {
   createCompany(data) {
     logger.log({
       worker: this.id,
-          type: 'info',
-          msg: 'company created'
-      });
-      return staffAPI.createCompany(contentProvider.getNewCompanyData())
-            .then((companyData) => {
-              for (let i = 0; i < data.numOfUsers; i++) {
-                staffAPI.inviteUser(companyData, contentProvider.getNewUserData()).then((userData) => {
-                  logger.log(userData);
-                  this.messageQueue.push('newUser', userData);
-                });
-              }
-            });
+      type: 'info',
+      msg: 'company created',
+    });
+    return staffAPI.createCompany(contentProvider.getNewCompanyData())
+          .then((companyData) => {
+            for (let i = 0; i < data.numOfUsers; i++) {
+              staffAPI.inviteUser(companyData, contentProvider.getNewUserData()).then((userData) => {
+                logger.log(userData);
+                this.messageQueue.push('newUser', userData);
+              });
+            }
+          });
   }
 
   beginWork() {

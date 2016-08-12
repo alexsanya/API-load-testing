@@ -2,12 +2,12 @@ import kue from './node_modules/kue';
 
 class MessageQueue {
 
-  constructor(name) {
+  constructor() {
     this.queue = kue.createQueue();
   }
 
   on(jobName, handler) {
-    this.queue.process(jobName, (job, done) => { 
+    this.queue.process(jobName, (job, done) => {
       handler(job.data).then(done);
     });
   }
@@ -19,4 +19,4 @@ class MessageQueue {
 
 export default function getMessageQueue() {
   return new MessageQueue();
-};
+}
