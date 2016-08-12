@@ -1,3 +1,5 @@
+import staffAPI from './staffAPI';
+import contentProvider from './contentProvider';
 import getMessageQueue from './messageQueue';
 import Q from './node_modules/q';
 import throng from './node_modules/throng';
@@ -10,17 +12,21 @@ class WorkerCreator {
 		this.messageQueue = messageQueue;
 	}
 
-	createCompany(numOfUsers) {
+	createCompany(data) {
 		logger.log({
 			worker: this.id,
         	type: 'info',
         	msg: 'company created'
     	});
-		this.messageQueue.push('newCompany', {
-			name: 'CompanyName'
-		});
-
-		return Q.resolve();
+    	return staffAPI.createCompany(contentProvider.getNewCompanyData())
+    				.then((companyData) => {
+    					for (let i = 0; i < data.numOfUsers; i++) {
+    						staffAPI.inviteUser(companyData, contentProvider.getNewUserData()).then((userData) => {
+    							logger.log(userData);
+    							this.messageQueue.push('newUser', userData);
+    						});
+    					}
+    				});
 	}
 
 	beginWork() {

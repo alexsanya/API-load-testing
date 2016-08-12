@@ -7,8 +7,8 @@ class MessageQueue {
 	}
 
 	on(jobName, handler) {
-		this.queue.process(jobName, (job, ack) => { 
-			handler(job.data).then(ack);
+		this.queue.process(jobName, (job, done) => { 
+			handler(job.data).then(done);
 		});
 	}
 
