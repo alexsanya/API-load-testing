@@ -2,21 +2,21 @@ import kue from './node_modules/kue';
 
 class MessageQueue {
 
-	constructor(name) {
-		this.queue = kue.createQueue();
-	}
+  constructor(name) {
+    this.queue = kue.createQueue();
+  }
 
-	on(jobName, handler) {
-		this.queue.process(jobName, (job, done) => { 
-			handler(job.data).then(done);
-		});
-	}
+  on(jobName, handler) {
+    this.queue.process(jobName, (job, done) => { 
+      handler(job.data).then(done);
+    });
+  }
 
-	push(jobName, data) {
-		this.queue.create(jobName, data).save();
-	}
+  push(jobName, data) {
+    this.queue.create(jobName, data).save();
+  }
 }
 
 export default function getMessageQueue() {
-	return new MessageQueue();
+  return new MessageQueue();
 };
