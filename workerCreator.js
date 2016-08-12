@@ -20,19 +20,20 @@ class WorkerCreator {
     return staffAPI.createCompany(contentProvider.getNewCompanyData())
           .then((companyData) => {
             for (let i = 0; i < data.numOfUsers; i++) {
-              staffAPI.inviteUser(companyData, contentProvider.getNewUserData()).then((userData) => {
-                logger.log(userData);
-                this.messageQueue.push('newUser', userData);
-              });
+              staffAPI.inviteUser(companyData, contentProvider.getNewUserData())
+                .then((userData) => {
+                  logger.log(userData);
+                  this.messageQueue.push('newUser', userData);
+                });
             }
           });
   }
 
   beginWork() {
     logger.log({
-          type: 'info',
-          msg: `worker ${this.id} started`,
-      });
+      type: 'info',
+      msg: `worker ${this.id} started`,
+    });
     this.messageQueue.on('createCompany', this.createCompany.bind(this));
   }
 
@@ -42,11 +43,11 @@ class WorkerCreator {
   }
 }
 
-throng(start, { workers: 3 });
-
 function start(id) {
   const worker = new WorkerCreator(id, getMessageQueue());
 
-    worker.beginWork();
-    process.on('SIGTERM', worker.shutdown);
+  worker.beginWork();
+  process.on('SIGTERM', worker.shutdown);
 }
+
+throng(start, { workers: 3 });
