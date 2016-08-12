@@ -50,4 +50,7 @@ function start(id) {
   process.on('SIGTERM', worker.shutdown);
 }
 
-throng(start, { workers: 3 });
+throng({
+  start,
+  workers: 3,
+});
