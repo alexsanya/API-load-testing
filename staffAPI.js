@@ -2,11 +2,12 @@ import Q from './node_modules/q';
 import restify from './node_modules/restify';
 import config from './config';
 import contentProvider from './contentProvider';
+import getRequestStats from './requestStats';
 
 class StaffAPIConnection {
-  constructor(client, token) {
+  constructor(client, requestStats) {
     this.client = client;
-    this.token = token;
+    this.requestStats = requestStats;
   }
 
   createCompany() {
@@ -22,7 +23,7 @@ class StaffAPIConnection {
       }
     );
 
-    return deferred.promise;
+    return this.requestStats.addStatsMiddleware(deferred.promise);
   }
 
   inviteUser(companyData) {
@@ -37,13 +38,14 @@ class StaffAPIConnection {
         return deferred.resolve(obj.data);
       }
     );
-    return deferred.promise;
+    return this.requestStats.addStatsMiddleware(deferred.promise);
   }
 }
 
-export default function signUp() {
+export default function signUp(statsConfig) {
   const deferred = Q.defer();
   const headers = {};
+  const requestStats = getRequestStats(statsConfig);
   const client = restify.createJsonClient({
     headers,
     url: config.apiURL,
@@ -54,8 +56,9 @@ export default function signUp() {
       return deferred.reject(err);
     }
     headers.Authorization = `JWT ${obj.data.token}`;
-    return deferred.resolve(new StaffAPIConnection(client, obj.data.token));
+    const staffApi = new StaffAPIConnection(client, requestStats);
+    return deferred.resolve(staffApi);
   });
 
-  return deferred.promise;
+  return requestStats.addStatsMiddleware(deferred.promise);
 }

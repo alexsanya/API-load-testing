@@ -12,8 +12,8 @@ class WorkerCreator {
     this.messageQueue = messageQueue;
   }
 
-  requestErrorHandler(err) {
-    this.messageQueue.push('workerCreatorRequestError', err);
+  requestErrorHandler() {
+    // this.messageQueue.push('workerCreatorRequestError', err);
   }
 
   createCompany(staffApi, data) {
@@ -41,7 +41,24 @@ class WorkerCreator {
       type: 'info',
       msg: `worker ${this.id} started`,
     });
-    signUp().then((staffApi) => {
+    signUp({
+      slowRequestMs: config.slowRequestMs,
+      avgInfoIntervalMs: config.avgInfoIntervalMs,
+      onSlowRequest: (info) => {
+        this.messageQueue.push('slowRequest', {
+          info,
+          workerType: 'creator',
+          workerId: this.id,
+        });
+      },
+      onAvgResponceInfo: (info) => {
+        this.messageQueue.push('avgResponceTime', {
+          info,
+          workerType: 'creator',
+          workerId: this.id,
+        });
+      },
+    }).then((staffApi) => {
       this.staffApi = staffApi;
       this.messageQueue.on('createCompany', this.createCompany.bind(this, staffApi));
     }).catch(this.requestErrorHandler.bind(this));
