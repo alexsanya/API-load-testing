@@ -1,4 +1,4 @@
-import staffAPI from './staffAPI';
+import signUp from './staffAPI';
 import contentProvider from './contentProvider';
 import getMessageQueue from './messageQueue';
 import throng from './node_modules/throng';
@@ -11,22 +11,28 @@ class WorkerCreator {
     this.messageQueue = messageQueue;
   }
 
-  createCompany(data) {
+  requestErrorHandler(err) {
+    this.messageQueue.push('workerCreatorRequestError', err);
+  }
+
+  createCompany(staffApi, data) {
     logger.log({
       worker: this.id,
       type: 'info',
       msg: 'company created',
     });
-    return staffAPI.createCompany(contentProvider.getNewCompanyData())
+    return staffApi.createCompany(contentProvider.getNewCompanyData())
           .then((companyData) => {
             for (let i = 0; i < data.numOfUsers; i++) {
-              staffAPI.inviteUser(companyData, contentProvider.getNewUserData())
+              staffApi.inviteUser(companyData)
                 .then((userData) => {
                   logger.log(userData);
                   this.messageQueue.push('newUser', userData);
-                });
+                })
+                .catch(this.requestErrorHandler.bind(this));
             }
-          });
+          })
+          .catch(this.requestErrorHandler.bind(this));
   }
 
   beginWork() {
@@ -34,7 +40,10 @@ class WorkerCreator {
       type: 'info',
       msg: `worker ${this.id} started`,
     });
-    this.messageQueue.on('createCompany', this.createCompany.bind(this));
+    signUp().then((staffApi) => {
+      this.staffApi = staffApi;
+      this.messageQueue.on('createCompany', this.createCompany.bind(this, staffApi));
+    }).catch(this.requestErrorHandler.bind(this));
   }
 
   shutdown() {
