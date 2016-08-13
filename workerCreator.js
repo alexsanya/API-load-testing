@@ -1,6 +1,7 @@
 import signUp from './staffAPI';
 import contentProvider from './contentProvider';
 import getMessageQueue from './messageQueue';
+import config from './config';
 import throng from './node_modules/throng';
 import logger from './node_modules/logfmt';
 
@@ -61,5 +62,5 @@ function start(id) {
 
 throng({
   start,
-  workers: 3,
+  workers: config.workerCreatorConcurrency,
 });
