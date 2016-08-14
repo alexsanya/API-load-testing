@@ -1125,6 +1125,42 @@
         }
       }
     },
+    "log-update": {
+      "version": "1.0.2",
+      "from": "log-update@latest",
+      "resolved": "https://registry.npmjs.org/log-update/-/log-update-1.0.2.tgz",
+      "dependencies": {
+        "ansi-escapes": {
+          "version": "1.4.0",
+          "from": "ansi-escapes@>=1.0.0 <2.0.0",
+          "resolved": "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-1.4.0.tgz"
+        },
+        "cli-cursor": {
+          "version": "1.0.2",
+          "from": "cli-cursor@>=1.0.2 <2.0.0",
+          "resolved": "https://registry.npmjs.org/cli-cursor/-/cli-cursor-1.0.2.tgz",
+          "dependencies": {
+            "restore-cursor": {
+              "version": "1.0.1",
+              "from": "restore-cursor@>=1.0.1 <2.0.0",
+              "resolved": "https://registry.npmjs.org/restore-cursor/-/restore-cursor-1.0.1.tgz",
+              "dependencies": {
+                "exit-hook": {
+                  "version": "1.1.1",
+                  "from": "exit-hook@>=1.0.0 <2.0.0",
+                  "resolved": "https://registry.npmjs.org/exit-hook/-/exit-hook-1.1.1.tgz"
+                },
+                "onetime": {
+                  "version": "1.1.0",
+                  "from": "onetime@>=1.0.0 <2.0.0",
+                  "resolved": "https://registry.npmjs.org/onetime/-/onetime-1.1.0.tgz"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "logfmt": {
       "version": "1.2.0",
       "from": "https://registry.npmjs.org/logfmt/-/logfmt-1.2.0.tgz",
@@ -1571,6 +1607,11 @@
           "resolved": "https://registry.npmjs.org/lodash.defaults/-/lodash.defaults-4.1.0.tgz"
         }
       }
+    },
+    "uid": {
+      "version": "0.0.2",
+      "from": "uid@latest",
+      "resolved": "https://registry.npmjs.org/uid/-/uid-0.0.2.tgz"
     }
   }
 }

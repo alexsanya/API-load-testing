@@ -41,6 +41,11 @@ class RequestStats {
     if (durationMs > this.config.slowRequestMs) {
       this.config.onSlowRequest(data);
     }
+    if (data.statusCode) {
+      const errorCodeFirstDigit = Math.trunc(data.statusCode / 100);
+      if (errorCodeFirstDigit === 4) this.stats.errorsType4x++;
+      if (errorCodeFirstDigit === 5) this.stats.errorsType5x++;
+    }
     this.stats.slowestRequestMs = Math.max(durationMs, this.stats.slowestRequestMs);
   }
 
@@ -56,6 +61,8 @@ class RequestStats {
   }
 }
 
-export default function getRequestStats(config) {
+function getRequestStats(config) {
   return new RequestStats(config);
 }
+
+export default getRequestStats;
