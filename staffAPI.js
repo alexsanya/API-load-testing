@@ -5,9 +5,14 @@ import contentProvider from './contentProvider';
 import getRequestStats from './requestStats';
 
 class StaffAPIConnection {
-  constructor(client, requestStats) {
+  constructor(token, client, requestStats) {
+    this.token = token;
     this.client = client;
     this.requestStats = requestStats;
+  }
+
+  getToken() {
+    return this.token;
   }
 
   createCompany() {
@@ -38,11 +43,38 @@ class StaffAPIConnection {
         return deferred.resolve(obj.data);
       }
     );
+
+    return this.requestStats.addStatsMiddleware(deferred.promise);
+  }
+
+  sendUserActivity(data) {
+    const deferred = Q.defer();
+    const date = (new Date()).toISOString();
+
+    this.client.post(`/api/1.0/activity/${date}`, data, (err, req, res, obj) => {
+      if (err) {
+        return deferred.reject(err);
+      }
+      return deferred.resolve(obj.data);
+    });
+
     return this.requestStats.addStatsMiddleware(deferred.promise);
   }
 }
 
-export default function signUp(statsConfig) {
+function getStaffApiByToken(token, statsConfig) {
+  const requestStats = getRequestStats(statsConfig);
+  const client = restify.createJsonClient({
+    headers: {
+      Authorization: `JWT ${token}`,
+    },
+    url: config.apiURL,
+  });
+
+  return new StaffAPIConnection(token, client, requestStats);
+}
+
+function signUp(statsConfig) {
   const deferred = Q.defer();
   const headers = {};
   const requestStats = getRequestStats(statsConfig);
@@ -56,9 +88,12 @@ export default function signUp(statsConfig) {
       return deferred.reject(err);
     }
     headers.Authorization = `JWT ${obj.data.token}`;
-    const staffApi = new StaffAPIConnection(client, requestStats);
+    const staffApi = new StaffAPIConnection(obj.data.token, client, requestStats);
     return deferred.resolve(staffApi);
   });
 
   return requestStats.addStatsMiddleware(deferred.promise);
 }
+
+export { getStaffApiByToken, signUp };
+

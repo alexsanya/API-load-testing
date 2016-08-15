@@ -4,6 +4,7 @@
   "description": "Load testing for Staff.com backend",
   "main": "index.js",
   "scripts": {
+    "start": "nf start",
     "test": "npm test"
   },
   "keywords": [
@@ -28,6 +29,7 @@
     "q": "^1.4.1",
     "restify": "^4.1.1",
     "throng": "^4.0.0",
-    "uid": "0.0.2"
+    "uid": "0.0.2",
+    "websocket": "^1.0.23"
   }
 }

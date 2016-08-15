@@ -1,4 +1,4 @@
-import signUp from './staffAPI';
+import { signUp } from './staffAPI';
 import contentProvider from './contentProvider';
 import getMessageQueue from './messageQueue';
 import config from './config';
@@ -27,8 +27,12 @@ class WorkerCreator {
             for (let i = 0; i < data.numOfUsers; i++) {
               staffApi.inviteUser(companyData)
                 .then((userData) => {
-                  logger.log(userData);
-                  this.messageQueue.push('newUser', userData);
+                  const newUserData = {
+                    id: userData.userId,
+                    authToken: staffApi.getToken(),
+                    company: companyData.id,
+                  };
+                  this.messageQueue.push('newUser', newUserData);
                 })
                 .catch(this.requestErrorHandler.bind(this));
             }
