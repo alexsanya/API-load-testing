@@ -2,7 +2,7 @@ import getMessageQueue from './messageQueue';
 import getWorkerGroupStats from './workerGroupStats';
 import config from './config';
 
-let countdown = 30;
+let countdown = config.testDuration;
 const messageQueue = getMessageQueue();
 const workerGroupStats = getWorkerGroupStats();
 
