@@ -51,6 +51,9 @@ function start(id) {
       worker: id,
       msg: 'authorized',
     });
+    messageQueue.push('authentification', {
+      token: staffApi.getToken(),
+    });
     worker = new WorkerCreator(id, messageQueue, staffApi, q);
     worker.beginWork();
   }).catch((err) => {
