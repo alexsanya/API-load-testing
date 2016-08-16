@@ -16,6 +16,7 @@ function start(id) {
   logger.log({
     type: 'info',
     worker: id,
+    pid: process.pid,
     msg: 'start',
   });
 
@@ -47,7 +48,8 @@ function start(id) {
   signUp(q, requestStats, contentProvider, restify, config.apiUrl).then((staffApi) => {
     logger.log({
       type: 'info',
-      msg: `worker ${id} passed authentification`,
+      worker: id,
+      msg: 'authorized',
     });
     worker = new WorkerCreator(id, messageQueue, staffApi, q);
     worker.beginWork();
@@ -60,7 +62,19 @@ function start(id) {
   });
 
   process.on('SIGTERM', () => {
-    worker.terminate().then(process.exit);
+    logger.log({
+      type: 'info',
+      worker: id,
+      msg: 'termination',
+    });
+    worker.terminate().then(() => {
+      logger.log({
+        type: 'info',
+        worker: id,
+        msg: 'terminated',
+      });
+      process.exit();
+    });
   });
 }
 

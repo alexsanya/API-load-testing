@@ -37,7 +37,7 @@
     }
 
     deleteCompany(companyId) {
-      return this.staffApi.createCompany(companyId);
+      return this.staffApi.deleteCompany(companyId);
     }
 
     beginWork() {

@@ -2,7 +2,7 @@
   'use strict';
 
   const config = {
-    concurrency: 2,
+    concurrency: 1,
     apiUrl: 'http://td-rest-api.herokuapp.com:80',
     slowRequestMs: 1000,
     avgInfoIntervalMs: 3000,
