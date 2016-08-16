@@ -40,14 +40,17 @@ function start(id) {
     },
   };
 
+  let worker;
   const requestStats = createRequestStats(q, uid, requestStatsParams);
 
   signUp(q, requestStats, contentProvider, restify, config.apiUrl).then((staffApi) => {
-    const worker = new WorkerCreator(id, messageQueue, staffApi, contentProvider);
+    worker = new WorkerCreator(id, messageQueue, staffApi, q);
     worker.beginWork();
   });
 
-  process.on('SIGTERM', process.exit);
+  process.on('SIGTERM', () => {
+    worker.terminate().then(process.exit);
+  });
 }
 
 throng({

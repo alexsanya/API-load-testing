@@ -2,10 +2,12 @@
   'use strict';
 
   class WorkerCreator {
-    constructor(id, messageQueue, staffApi) {
+    constructor(id, messageQueue, staffApi, q) {
+      this.q = q;
       this.id = id;
       this.staffApi = staffApi;
       this.messageQueue = messageQueue;
+      this.companiesCreated = [];
     }
 
     requestErrorHandler(err) {
@@ -24,6 +26,7 @@
 
       return this.staffApi.createCompany()
             .then((companyData) => {
+              this.companiesCreated.push(companyData.id);
               for (let i = 0; i < data.numOfUsers; i++) {
                 this.staffApi.inviteUser(companyData)
                   .then(reportNewUser.bind(this, companyData.id))
@@ -33,8 +36,21 @@
             .catch(this.requestErrorHandler.bind(this));
     }
 
+    deleteCompany(companyId) {
+      return this.staffApi.createCompany(companyId);
+    }
+
     beginWork() {
       this.messageQueue.on('createCompany', this.createCompany.bind(this));
+    }
+
+    terminate() {
+      const promisesList = [];
+      this.companiesCreated.forEach((companyId) => {
+        promisesList.push(this.deleteCompany(companyId));
+      });
+
+      return this.q.all(promisesList);
     }
 
   }
