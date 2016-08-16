@@ -15,7 +15,8 @@ const config = require('./config');
 function start(id) {
   logger.log({
     type: 'info',
-    msg: `worker ${id} started`,
+    worker: id,
+    msg: 'start',
   });
 
   const messageQueue = getMessageQueue(kue);
@@ -44,8 +45,18 @@ function start(id) {
   const requestStats = createRequestStats(q, uid, requestStatsParams);
 
   signUp(q, requestStats, contentProvider, restify, config.apiUrl).then((staffApi) => {
+    logger.log({
+      type: 'info',
+      msg: `worker ${id} passed authentification`,
+    });
     worker = new WorkerCreator(id, messageQueue, staffApi, q);
     worker.beginWork();
+  }).catch((err) => {
+    logger.log({
+      type: 'error',
+      worker: id,
+      error: err,
+    });
   });
 
   process.on('SIGTERM', () => {
