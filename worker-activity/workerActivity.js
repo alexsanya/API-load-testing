@@ -24,11 +24,7 @@
         SOCKET_PING_INTERVAL_S,
         QUANTUM_TIME_MS,
         (clientIndex) => {
-          this.logger.log({
-            clientIndex,
-            type: 'info',
-            msg: 'ping request sent',
-          });
+          this.logger.info(`ping request sent to client ${clientIndex}`);
           this.usersList[clientIndex].sentPingRequest();
         }
       );
@@ -37,11 +33,7 @@
         ACTIVITY_EVENTS_INTERVAL_S,
         QUANTUM_TIME_MS,
         (clientIndex) => {
-          this.logger.log({
-            clientIndex,
-            type: 'info',
-            msg: 'activity request sent',
-          });
+          this.logger.info(`activity request sent to client ${clientIndex}`);
           this.usersList[clientIndex].sendActivityRequest();
         }
       );
@@ -50,6 +42,7 @@
         const typeDepartment = userData.company ? 'company' : 'workspace';
         const nameDepartment = userData[typeDepartment];
         this.createUser(userData.authToken, nameDepartment, typeDepartment).then((user) => {
+          this.logger.debug('captured newUser message', user);
           this.usersList.push(user);
           socketPinger.setNumber(this.usersList.length);
           activityEmulation.setNumber(this.usersList.length);
@@ -75,6 +68,7 @@
       socketClient
         .connect(`${this.sockConnectionURL}?token=${authToken}&EIO=3&transport=websocket`);
       socketClient.on('connect', (connection) => {
+        this.logger.debug('established socket connection ', connection);
         deferred.resolve(new this.ActiveUser(
           connection,
           this.staffApi,

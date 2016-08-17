@@ -28,6 +28,7 @@ function start(workerId) {
     slowRequestMs: config.slowRequestMs,
     avgInfoIntervalMs: config.avgInfoIntervalMs,
     onSlowRequest: (info, time) => {
+      logger.warn(`slow request captured time: ${time}ms`, info);
       messageQueue.push('slowRequest', {
         info,
         workerId,
