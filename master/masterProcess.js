@@ -4,7 +4,9 @@
   const ONE_SECOND = 1000;
 
   class MasterProcess {
-    constructor(messageQueue, workerGroupStats, config) {
+    constructor(q, messageQueue, workerGroupStats, config, logger) {
+      this.q = q;
+      this.logger = logger;
       this.config = config;
       this.messageQueue = messageQueue;
       this.countdown = config.testTime;
@@ -12,26 +14,34 @@
     }
 
     updateRuntimeInfo() {
-      this.workerGroupStats.showStats(this.countdown);
+      const statsInfo = this.workerGroupStats.showStats(this.countdown);
       if (this.countdown) {
         setTimeout(this.updateRuntimeInfo.bind(this), ONE_SECOND);
       } else {
-        this.config.onFinish();
+        this.config.onFinish(statsInfo);
       }
       this.countdown--;
     }
 
     sendJobs() {
+      const job = {
+        numOfUsers: this.config.usersPerCompany,
+      };
+
       for (let i = 0; i < this.config.numberOfCompanies; i++) {
-        this.messageQueue.push('createCompany', {
-          numOfUsers: this.config.usersPerCompany,
-        });
+        this.logger.info('Sent job for company creation ', job);
+        this.messageQueue.push('createCompany', job);
       }
     }
 
     listen() {
       this.messageQueue.on('statsData',
         this.workerGroupStats.adjustStats.bind(this.workerGroupStats));
+
+      this.messageQueue.on('slowRequest', (info) => {
+        this.logger.warn('Slow request ', info);
+        return this.q.resolve();
+      });
     }
   }
 

@@ -22,7 +22,7 @@ function start(workerId) {
   const requestStatsCfg = {
     slowRequestMs: config.slowRequestMs,
     avgInfoIntervalMs: config.avgInfoIntervalMs,
-    onSlowRequest: (info) => {
+    onSlowRequest: (info, time) => {
       logger.log({
         type: 'info',
         msg: 'slow request captured',
@@ -31,6 +31,7 @@ function start(workerId) {
       messageQueue.push('slowRequest', {
         info,
         workerId,
+        time,
         workerType: 'activity',
       });
     },

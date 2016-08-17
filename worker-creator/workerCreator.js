@@ -11,10 +11,7 @@
     }
 
     requestErrorHandler(err) {
-      this.logger.log({
-        action: 'requesr error',
-        data: err,
-      });
+      this.logger.error('requesr error', err);
       this.messageQueue.push('workerCreatorRequestError', err);
     }
 
@@ -24,7 +21,7 @@
           id: userData.userId,
           company: companyId,
         };
-        this.logger.log({
+        this.logger.info({
           action: 'user invited',
           id: userData.userId,
           company: companyId,
@@ -34,10 +31,7 @@
 
       return this.staffApi.createCompany()
             .then((companyData) => {
-              this.logger.log({
-                action: 'company created',
-                data: companyData.id,
-              });
+              this.logger.info(`created company with id ${companyData.id}`);
               this.companiesCreated.push(companyData.id);
               for (let i = 0; i < data.numOfUsers; i++) {
                 this.staffApi.inviteUser(companyData)
@@ -50,10 +44,7 @@
 
     deleteCompany(companyId) {
       return this.staffApi.deleteCompany(companyId).then(() => {
-        this.logger.log({
-          companyId,
-          action: 'company removed',
-        });
+        this.logger.info(`removed company with id: ${companyId}`);
       });
     }
 
