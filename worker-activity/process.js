@@ -23,14 +23,14 @@ function start(workerId) {
     onSlowRequest: (info) => {
       messageQueue.push('slowRequest', {
         info,
-        workerId: workerId,
+        workerId,
         workerType: 'activity',
       });
     },
     onAvgResponceInfo: (info) => {
       messageQueue.push('statsData', {
         info,
-        workerId: workerId,
+        workerId,
         workerType: 'activity',
       });
     },
@@ -46,7 +46,7 @@ function start(workerId) {
   });
 
   messageQueue.on('authentification', (data) => {
-    const staffApi = getStaffApiByToken(Q, requestStats, contentProvider, 
+    const staffApi = getStaffApiByToken(Q, requestStats, contentProvider,
       restify, config.apiUrl, data.token);
     const worker = new WorkerActivity(
       Q, Websocket, DigestTimer, messageQueue,

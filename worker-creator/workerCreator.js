@@ -18,7 +18,6 @@
       const reportNewUser = (companyId, userData) => {
         const newUserData = {
           id: userData.userId,
-          authToken: this.staffApi.getToken(),
           company: companyId,
         };
         this.messageQueue.push('newUser', newUserData);

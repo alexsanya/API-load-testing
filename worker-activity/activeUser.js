@@ -3,7 +3,6 @@
 
   class ActiveUser {
     constructor(socketConnection, staffApi, typeDepartment, nameDepartment) {
-      const client = new websocket.client();
       this.staffApi = staffApi;
       this.typeDepartment = typeDepartment;
       this.nameDepartment = nameDepartment;
@@ -15,7 +14,7 @@
     }
 
     sendActivityRequest() {
-      this.staffApi.sendUserActivity(typeDepartment, nameDepartment);
+      this.staffApi.sendUserActivity(this.typeDepartment, this.nameDepartment);
     }
   }
 

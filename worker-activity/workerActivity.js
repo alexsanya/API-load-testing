@@ -2,25 +2,23 @@
   'use strict';
 
   class WorkerActivity {
-    constructor(q, webSocket, digestTimer, messageQueue, staffApi, ActiveUser, sockConnectionURL) {
+    constructor(q, WebSocket, DigestTimer, messageQueue, staffApi, ActiveUser, sockConnectionURL) {
       this.q = q;
-      this.webSocket = webSocket;
-      this.digestTimer = digestTimer;
+      this.WebSocket = WebSocket;
+      this.DigestTimer = DigestTimer;
       this.messageQueue = messageQueue;
       this.staffApi = staffApi;
       this.ActiveUser = ActiveUser;
       this.sockConnectionURL = sockConnectionURL;
       this.usersList = [];
-      this.userIndex = 0;
-      this.socketIndex = 0;
     }
 
     beginWork() {
       const QUANTUM_TIME_MS = 100;
-      const SOCKET_PING_INTERVAL_S = 25;
-      const ACTIVITY_EVENTS_INTERVAL  = 3*60;
+      const SOCKET_PING_INTERVAL_S = 10;
+      const ACTIVITY_EVENTS_INTERVAL_S = 30;
 
-      const socketPinger = new this.digestTimer(
+      const socketPinger = new this.DigestTimer(
         SOCKET_PING_INTERVAL_S,
         QUANTUM_TIME_MS,
         (index) => {
@@ -28,8 +26,8 @@
         }
       );
 
-      const activityEmulation = new this.digestTimer(
-        ACTIVITY_EVENTS_INTERVAL,
+      const activityEmulation = new this.DigestTimer(
+        ACTIVITY_EVENTS_INTERVAL_S,
         QUANTUM_TIME_MS,
         (index) => {
           this.usersList[index].sendActivityRequest();
@@ -48,25 +46,27 @@
         return this.q.resolve();
       });
 
-      let doDigestLoop = () => {
+      const doDigestLoop = () => {
         socketPinger.tick();
         activityEmulation.tick();
         setTimeout(doDigestLoop, QUANTUM_TIME_MS);
-      }
+      };
 
       doDigestLoop();
     }
 
     createUser(authToken, nameDepartment, typeDepartment) {
-      const socketClient = new this.webSocket.client();
+      const Client = this.WebSocket.client;
+      const socketClient = new Client();
       const deferred = this.q.defer();
 
-      socketClient.connect(`${this.sockConnectionURL}?token=${authToken}&EIO=3&transport=websocket`);
+      socketClient
+        .connect(`${this.sockConnectionURL}?token=${authToken}&EIO=3&transport=websocket`);
       socketClient.on('connect', (connection) => {
         deferred.resolve(new this.ActiveUser(
-          connection, 
-          this.staffApi, 
-          nameDepartment, 
+          connection,
+          this.staffApi,
+          nameDepartment,
           typeDepartment
           )
         );
@@ -77,4 +77,4 @@
   }
 
   module.exports = WorkerActivity;
- })();
+})();

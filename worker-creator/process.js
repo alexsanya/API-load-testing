@@ -6,6 +6,7 @@ const logger = require('./node_modules/logfmt');
 const faker = require('./node_modules/faker');
 const kue = require('./node_modules/kue');
 const signUp = require('../lib/staffAPI').signUp;
+const getStaffApiByToken = require('../lib/staffAPI').getStaffApiByToken;
 const WorkerCreator = require('./workerCreator');
 const createRequestStats = require('../lib/requestStats').create;
 const createContentProvider = require('../lib/contentProvider').create;
@@ -45,15 +46,18 @@ function start(id) {
   let worker;
   const requestStats = createRequestStats(q, uid, requestStatsParams);
 
-  signUp(q, requestStats, contentProvider, restify, config.apiUrl).then((staffApi) => {
+  signUp(q, requestStats, contentProvider, restify, config.apiUrl).then((data) => {
     logger.log({
       type: 'info',
       worker: id,
       msg: 'authorized',
     });
+
     messageQueue.push('authentification', {
-      token: staffApi.getToken(),
+      token: data.token,
     });
+    const staffApi =
+      getStaffApiByToken(q, requestStats, contentProvider, restify, config.apiUrl, data.token);
     worker = new WorkerCreator(id, messageQueue, staffApi, q);
     worker.beginWork();
   }).catch((err) => {
