@@ -2,12 +2,14 @@
   'use strict';
 
   class WorkerActivity {
-    constructor(q, WebSocket, DigestTimer, messageQueue, staffApi, ActiveUser, sockConnectionURL) {
+    constructor(q, WebSocket, DigestTimer, messageQueue,
+      staffApi, logger, ActiveUser, sockConnectionURL) {
       this.q = q;
       this.WebSocket = WebSocket;
       this.DigestTimer = DigestTimer;
       this.messageQueue = messageQueue;
       this.staffApi = staffApi;
+      this.logger = logger;
       this.ActiveUser = ActiveUser;
       this.sockConnectionURL = sockConnectionURL;
       this.usersList = [];
@@ -15,22 +17,32 @@
 
     beginWork() {
       const QUANTUM_TIME_MS = 100;
-      const SOCKET_PING_INTERVAL_S = 10;
-      const ACTIVITY_EVENTS_INTERVAL_S = 30;
+      const SOCKET_PING_INTERVAL_S = 25;
+      const ACTIVITY_EVENTS_INTERVAL_S = 3 * 60;
 
       const socketPinger = new this.DigestTimer(
         SOCKET_PING_INTERVAL_S,
         QUANTUM_TIME_MS,
-        (index) => {
-          this.usersList[index].sentPingRequest();
+        (clientIndex) => {
+          this.logger.log({
+            clientIndex,
+            type: 'info',
+            msg: 'ping request sent',
+          });
+          this.usersList[clientIndex].sentPingRequest();
         }
       );
 
       const activityEmulation = new this.DigestTimer(
         ACTIVITY_EVENTS_INTERVAL_S,
         QUANTUM_TIME_MS,
-        (index) => {
-          this.usersList[index].sendActivityRequest();
+        (clientIndex) => {
+          this.logger.log({
+            clientIndex,
+            type: 'info',
+            msg: 'activity request sent',
+          });
+          this.usersList[clientIndex].sendActivityRequest();
         }
       );
 

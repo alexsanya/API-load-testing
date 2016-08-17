@@ -2,7 +2,7 @@ const q = require('./node_modules/q');
 const uid = require('./node_modules/uid');
 const restify = require('./node_modules/restify');
 const throng = require('./node_modules/throng');
-const logger = require('./node_modules/logfmt');
+const fmtLogger = require('./node_modules/logfmt');
 const faker = require('./node_modules/faker');
 const kue = require('./node_modules/kue');
 const signUp = require('../lib/staffAPI').signUp;
@@ -11,12 +11,14 @@ const WorkerCreator = require('./workerCreator');
 const createRequestStats = require('../lib/requestStats').create;
 const createContentProvider = require('../lib/contentProvider').create;
 const getMessageQueue = require('../lib/messageQueue');
+const WorkerLogger = require('../lib/workerLogger');
 const config = require('./config');
 
-function start(id) {
+function start(workerId) {
+  const logger = new WorkerLogger(workerId, fmtLogger);
+
   logger.log({
     type: 'info',
-    worker: id,
     pid: process.pid,
     msg: 'start',
   });
@@ -31,14 +33,12 @@ function start(id) {
       messageQueue.push('slowRequest', {
         info,
         workerType: 'creator',
-        workerId: id,
       });
     },
     onAvgResponceInfo: (info) => {
       messageQueue.push('statsData', {
         info,
         workerType: 'creator',
-        workerId: id,
       });
     },
   };
@@ -49,7 +49,6 @@ function start(id) {
   signUp(q, requestStats, contentProvider, restify, config.apiUrl).then((data) => {
     logger.log({
       type: 'info',
-      worker: id,
       msg: 'authorized',
     });
 
@@ -58,12 +57,11 @@ function start(id) {
     });
     const staffApi =
       getStaffApiByToken(q, requestStats, contentProvider, restify, config.apiUrl, data.token);
-    worker = new WorkerCreator(id, messageQueue, staffApi, q);
+    worker = new WorkerCreator(messageQueue, staffApi, q, logger);
     worker.beginWork();
   }).catch((err) => {
     logger.log({
       type: 'error',
-      worker: id,
       error: err,
     });
   });
@@ -71,13 +69,11 @@ function start(id) {
   process.on('SIGTERM', () => {
     logger.log({
       type: 'info',
-      worker: id,
       msg: 'termination',
     });
     worker.terminate().then(() => {
       logger.log({
         type: 'info',
-        worker: id,
         msg: 'terminated',
       });
       process.exit();
