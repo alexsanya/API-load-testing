@@ -13,8 +13,8 @@ const MasterProcess = require('./masterProcess');
 
   if (args.length < 4) {
     process.stdout.write('Command line arguments are required\n');
-    process.stdout.write('babel-node master.js --presets es2015,stage-2 ' +
-      'master.js {isDryRun} {testTime} {numberOfCompanies} {usersPerCompany}\n');
+    process.stdout.write('babel-node master.js master.js ' +
+      '{isDryRun} {testTime} {numberOfCompanies} {usersPerCompany} --presets es2015,stage-2\n');
     process.exit();
   }
 
@@ -34,8 +34,8 @@ const MasterProcess = require('./masterProcess');
     },
   };
 
-  log.info('API test master process launched with congig:\n', config);
   log.setLevel('info');
+  log.info('API test master process launched with congig:\n', config);
 
   const messageQueue = getMessageQueue(kue);
   const workerGroupStats = getWorkerGroupStats(Q, logUpdate);
