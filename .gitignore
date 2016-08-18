@@ -1,5 +1,8 @@
 node_modules
 worker.iml
+master/build/
+master/lib-src/
+master/lib/
 master/apiLoadTesting.log
 
 
