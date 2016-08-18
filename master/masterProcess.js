@@ -35,9 +35,6 @@
     }
 
     listen() {
-      this.messageQueue.on('statsData',
-        this.workerGroupStats.adjustStats.bind(this.workerGroupStats));
-
       this.messageQueue.on('slowRequest', (info) => {
         this.logger.warn('Slow request ', info);
         return this.q.resolve();
