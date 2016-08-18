@@ -15,5 +15,6 @@ RUN ./node_modules/.bin/babel --presets es2015,stage-0 -d build/ ./
 
 #create symLinks
 
+
 #start application
 CMD [ "npm", "start" ]
