@@ -4,5 +4,12 @@ master/build/
 master/lib-src/
 master/lib/
 master/apiLoadTesting.log
+worker-activity/build/
+worker-activity/lib/
+worker-activity/npm-debug.log
+worker-activity/start.sh
+worker-creator/build/
+worker-creator/lib/
+
 
 
