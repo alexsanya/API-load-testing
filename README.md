@@ -6,7 +6,7 @@
 ## Launch
 - npm install -g babel-cli babel-core babel-preset-es2015 babel-preset-stage-2
 - ./worker-activity/start.sh
-- ./worker-creato/start.sh
+- ./worker-creator/start.sh
 - ./master/start.sh
 
 ## Warning
