@@ -10,4 +10,4 @@
 - ./master/start.sh
 
 ## Warning
-Worker-activity should be launched before worker-creator, otherwise it will not able to capture authentication token and making requests to API
+Worker-activity should be launched before worker-creator, otherwise it will unable to capture authentication token and making requests to API
