@@ -1,14 +1,13 @@
-# API-load-testing
+## Structure
+- /master - master process
+- /worker-creator - Sign-up, Create company, Create workspace, Invite users
+- /worker-activity - Emulate user activity
 
-##Prepare
-* npm install
+## Launch
+- npm install -g babel-cli babel-core babel-preset-es2015 babel-preset-stage-2
+- ./worker-activity/start.sh
+- ./worker-creato/start.sh
+- ./master/start.sh
 
-##Start
-* master: babel-node master.js --presets es2015,stage-2
-* workerCreator: babel-node workerCreator.js --presets es2015,stage-2
-* workerActivity: babel-node workerActivity.js --presets es2015,stage-2
-
-##Components
-* master.js - master process
-* workerCreator.js - Sign-up, Create company, Create workspace, Invite users
-* workerActivity.js - Emulate user activity
+## Warning
+Worker-activity should be launched before worker-creator, otherwise it will not able to capture authentication token and making requests to API
