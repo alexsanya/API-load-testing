@@ -5,14 +5,11 @@ WORKDIR /usr/src/app
 
 # Bundle app source
 COPY . /usr/src/app
-COPY ../lib /usr/src/app/lib-src
 
-#compile app
-RUN ./node_modules/.bin/babel --presets es2015,stage-2 -d build/ ./
-#compile libs
-RUN ./node_modules/.bin/babel --presets es2015,stage-2 -d lib-src/ ./lib
-RUN cp package.json build/
-WORKDIR build
+RUN npm install -g babel-cli babel-core babel-preset-es2015 babel-preset-stage-2
+RUN babel --presets es2015,stage-2 -d build/ .
+RUN babel --presets es2015,stage-2 -d lib/ ../lib/
+WORKDIR /usr/src/app/build
 RUN npm install
 
 #start application

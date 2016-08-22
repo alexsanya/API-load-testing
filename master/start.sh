@@ -10,6 +10,7 @@ if [ ! -d "lib" ]; then
 fi
 
 cp package.json build/
+cp npm-shrinkwrap.json build/
 cd build
 if [ ! -d "node_modules" ]; then
   echo "Installing dependencies..."

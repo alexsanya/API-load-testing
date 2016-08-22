@@ -14,14 +14,11 @@ const createContentProvider = require('../lib/contentProvider').create;
 const getMessageQueue = require('../lib/messageQueue');
 const WorkerLogger = require('../lib/workerLogger');
 
-
 const args = process.argv.slice(2);
 
-if (args.length < 5) {
+if (args.length < 3) {
   process.stdout.write('Command line arguments are required\n');
-  process.stdout.write('babel-node process.js ' +
-      '{ApiUrl} {concurrency} {slowResponseTime} {companiesNumber} ' +
-      '{usersPerCompany}--presets es2015,stage-2\n');
+  process.stdout.write('node process.js {ApiUrl} {concurrency} {slowResponseTime}\n');
   process.exit();
 }
 
@@ -29,8 +26,6 @@ const config = {
   apiUrl: args[0],
   concurrency: parseInt(args[1], 10),
   slowRequestMs: parseInt(args[2], 10),
-  numberOfCompanies: parseInt(args[3], 10),
-  usersPerCompany: parseInt(args[4], 10),
   avgInfoIntervalMs: 3000,
 };
 
