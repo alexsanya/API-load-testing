@@ -13,6 +13,7 @@ const createRequestStats = require('../lib/requestStats').create;
 const createContentProvider = require('../lib/contentProvider').create;
 const WorkerActivity = require('./workerActivity');
 const ActiveUser = require('./activeUser');
+const activityList = require('./activityList');
 const getStaffApiByToken = require('../lib/staffAPI').getStaffApiByToken;
 
 const args = process.argv.slice(2);
@@ -72,7 +73,7 @@ function start(workerId) {
       restify, config.apiUrl, data.token);
     const worker = new WorkerActivity(
       Q, Websocket, DigestTimer, messageQueue,
-      staffApi, logger, ActiveUser, config.socketConnectionURL
+      staffApi, logger, ActiveUser, config.socketConnectionURL, activityList
     );
     logger.info('started');
     worker.beginWork();

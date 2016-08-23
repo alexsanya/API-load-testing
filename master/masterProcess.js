@@ -39,6 +39,10 @@
         this.logger.warn('Slow request ', info);
         return this.q.resolve();
       });
+      this.messageQueue.on('workerRequestError', (info) => {
+        this.logger.warn('Failed request ', info);
+        return this.q.resolve();
+      });
     }
   }
 

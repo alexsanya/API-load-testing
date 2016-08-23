@@ -13,8 +13,8 @@
       this.socketConnection.sendUTF('2');
     }
 
-    sendActivityRequest() {
-      this.staffApi.sendUserActivity(this.typeDepartment, this.nameDepartment);
+    sendActivityRequest(config) {
+      return this.staffApi.sendUserActivity(config, this.typeDepartment, this.nameDepartment);
     }
   }
 

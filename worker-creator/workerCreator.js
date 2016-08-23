@@ -10,12 +10,13 @@
       this.logger = logger;
     }
 
-    requestErrorHandler(err) {
-      this.logger.error('requesr error', err);
-      this.messageQueue.push('workerCreatorRequestError', err);
+    requestErrorHandler({ err, detailInfo }) {
+      this.logger.error('request error', err, detailInfo);
+      this.messageQueue.push('workerRequestError', detailInfo);
     }
 
-    createCompany(data) {
+    inviteUsers(numOfUsers, workspaceId) {
+      const usersRequests = [];
       const reportNewUser = (companyId, userData) => {
         const newUserData = {
           id: userData.userId,
@@ -27,19 +28,31 @@
           company: companyId,
         });
         this.messageQueue.push('newUser', newUserData);
+        return userData;
       };
+      for (let i = 0; i < numOfUsers; i++) {
+        usersRequests.push(this.staffApi.inviteUser(workspaceId)
+          .then(reportNewUser.bind(this, workspaceId))
+        );
+      }
 
+      return this.q.all(usersRequests);
+    }
+
+    createCompany(data) {
       return this.staffApi.createCompany()
-            .then((companyData) => {
-              this.logger.info(`created company with id ${companyData.id}`);
-              this.companiesCreated.push(companyData.id);
-              for (let i = 0; i < data.numOfUsers; i++) {
-                this.staffApi.inviteUser(companyData)
-                  .then(reportNewUser.bind(this, companyData.id))
-                  .catch(this.requestErrorHandler.bind(this));
-              }
-            })
-            .catch(this.requestErrorHandler.bind(this));
+        .then((companyData) => {
+          this.logger.info(`created company with id ${companyData.id}`);
+          this.companiesCreated.push(companyData.id);
+          return companyData.id;
+        })
+        .then(this.staffApi.createWorkspace.bind(this.staffApi))
+        .then((workspaceData) => {
+          this.logger.info(`created workspace with id ${workspaceData.id}`);
+          return workspaceData.id;
+        })
+        .then(this.inviteUsers.bind(this, data.numOfUsers))
+        .catch(this.requestErrorHandler.bind(this));
     }
 
     deleteCompany(companyId) {

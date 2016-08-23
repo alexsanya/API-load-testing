@@ -3,7 +3,7 @@
 
   class WorkerActivity {
     constructor(q, WebSocket, DigestTimer, messageQueue,
-      staffApi, logger, ActiveUser, sockConnectionURL) {
+      staffApi, logger, ActiveUser, sockConnectionURL, activityConfig) {
       this.q = q;
       this.WebSocket = WebSocket;
       this.DigestTimer = DigestTimer;
@@ -12,6 +12,7 @@
       this.logger = logger;
       this.ActiveUser = ActiveUser;
       this.sockConnectionURL = sockConnectionURL;
+      this.activityConfig = activityConfig;
       this.usersList = [];
     }
 
@@ -34,7 +35,11 @@
         QUANTUM_TIME_MS,
         (clientIndex) => {
           this.logger.info(`activity request sent to client ${clientIndex}`);
-          this.usersList[clientIndex].sendActivityRequest();
+          this.usersList[clientIndex].sendActivityRequest(this.activityConfig)
+            .catch(({ err, detailInfo }) => {
+              this.logger.error('requesr error', err, detailInfo);
+              this.messageQueue.push('workerRequestError', detailInfo);
+            });
         }
       );
 
