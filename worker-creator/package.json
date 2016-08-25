@@ -5,7 +5,7 @@
   "main": "process.js",
   "scripts": {
     "compile": "babel --presets es2015,stage-2 -d build/ ./",
-    "start": "node process.js http://td-rest-api.herokuapp.com:80 1 1000 1 100",
+    "start": "node process.js http://td-rest-api.herokuapp.com:80 1 1000",
     "test": "mocha spec"
   },
   "keywords": [

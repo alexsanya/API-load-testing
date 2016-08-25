@@ -20,13 +20,11 @@
       const reportNewUser = (companyId, userData) => {
         const newUserData = {
           id: userData.userId,
+          name: userData.args.name,
+          email: userData.args.email,
           company: companyId,
         };
-        this.logger.info({
-          action: 'user invited',
-          id: userData.userId,
-          company: companyId,
-        });
+        this.logger.info('user invited', newUserData);
         this.messageQueue.push('newUser', newUserData);
         return userData;
       };

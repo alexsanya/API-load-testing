@@ -3,7 +3,7 @@
 
   class WorkerActivity {
     constructor(q, WebSocket, DigestTimer, messageQueue,
-      staffApi, logger, ActiveUser, sockConnectionURL, activityConfig) {
+      staffApi, logger, ActiveUser, sockConnectionURL, requestStats, restify, apiUrl, contentProvider, activityConfig) {
       this.q = q;
       this.WebSocket = WebSocket;
       this.DigestTimer = DigestTimer;
@@ -13,6 +13,10 @@
       this.ActiveUser = ActiveUser;
       this.sockConnectionURL = sockConnectionURL;
       this.activityConfig = activityConfig;
+      this.requestStats = requestStats;
+      this.restify = restify;
+      this.apiUrl = apiUrl;
+      this.contentProvider = contentProvider;
       this.usersList = [];
     }
 
@@ -44,9 +48,7 @@
       );
 
       this.messageQueue.on('newUser', (userData) => {
-        const typeDepartment = userData.company ? 'company' : 'workspace';
-        const nameDepartment = userData[typeDepartment];
-        this.createUser(userData.authToken, nameDepartment, typeDepartment).then((user) => {
+        this.createUser(userData).then((user) => {
           this.logger.debug('captured newUser message', user);
           this.usersList.push(user);
           socketPinger.setNumber(this.usersList.length);
@@ -65,25 +67,43 @@
       doDigestLoop();
     }
 
-    createUser(authToken, nameDepartment, typeDepartment) {
+    createUser(userData) {
       const Client = this.WebSocket.client;
       const socketClient = new Client();
       const deferred = this.q.defer();
 
-      socketClient
-        .connect(`${this.sockConnectionURL}?token=${authToken}&EIO=3&transport=websocket`);
-      socketClient.on('connect', (connection) => {
-        this.logger.debug('established socket connection ', connection);
-        deferred.resolve(new this.ActiveUser(
-          connection,
-          this.staffApi,
-          nameDepartment,
-          typeDepartment
-          )
-        );
-      });
+      const typeDepartment = userData.company ? 'company' : 'workspace';
+      const nameDepartment = userData[typeDepartment];
 
-      return deferred.promise;
+      return this.staffApi.register(this.q, this.restify, this.requestStats, this.apiUrl, userData)
+        .then((userData) => {
+          this.logger.info('User registered', userData);
+          return this.contentProvider.getAuthData(userData);
+        })
+        .then((authData) => {
+          this.logger.info('Authorization...', authData);
+          return this.staffApi.signUp(this.q, this.requestStats, this.contentProvider, this.restify,  this.apiUrl, authData)
+        })
+        .then((staffApi) => {
+          let deferred = this.q.defer();
+          socketClient
+            .connect(`${this.sockConnectionURL}?token=${staffApi.getToken()}&EIO=3&transport=websocket`);
+          socketClient.on('connect', (connection) => {
+            deferred.resolve({staffApi, connection});
+          });
+          return deferred.promise;
+        })
+        .then(({staffApi, connection}) => {
+          this.logger.info('established socket connection ', connection);
+          
+          return new this.ActiveUser(
+            connection,
+            staffApi,
+            nameDepartment,
+            typeDepartment
+          );
+        
+        });
     }
   }
 

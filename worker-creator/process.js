@@ -40,7 +40,7 @@ function start(workerId) {
   logger.info(`process started with pid: ${process.pid}`);
 
   const messageQueue = getMessageQueue(kue);
-  const contentProvider = createContentProvider(faker, authInfo);
+  const contentProvider = createContentProvider(faker);
 
   const requestStatsParams = {
     slowRequestMs: config.slowRequestMs,
@@ -66,14 +66,8 @@ function start(workerId) {
   let worker;
   const requestStats = createRequestStats(q, uid, requestStatsParams);
 
-  signUp(q, requestStats, contentProvider, restify, config.apiUrl).then((data) => {
+  signUp(q, requestStats, contentProvider, restify, config.apiUrl, authInfo).then((staffApi) => {
     logger.info('authorized');
-
-    messageQueue.push('authentification', {
-      token: data.token,
-    });
-    const staffApi =
-      getStaffApiByToken(q, requestStats, contentProvider, restify, config.apiUrl, data.token);
     worker = new WorkerCreator(messageQueue, staffApi, q, logger);
     worker.beginWork();
   }).catch((err) => {

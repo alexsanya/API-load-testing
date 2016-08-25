@@ -14,7 +14,7 @@ const createContentProvider = require('../lib/contentProvider').create;
 const WorkerActivity = require('./workerActivity');
 const ActiveUser = require('./activeUser');
 const activityList = require('./activityList');
-const getStaffApiByToken = require('../lib/staffAPI').getStaffApiByToken;
+const StaffApi = require('../lib/staffAPI');
 
 const args = process.argv.slice(2);
 
@@ -65,21 +65,13 @@ function start(workerId) {
 
   const requestStats = createRequestStats(Q, uid, requestStatsCfg);
   const contentProvider = createContentProvider(faker, config.auth);
-
-  logger.info('waiting for authentification');
-
-  messageQueue.on('authentification', (data) => {
-    const staffApi = getStaffApiByToken(Q, requestStats, contentProvider,
-      restify, config.apiUrl, data.token);
-    const worker = new WorkerActivity(
-      Q, Websocket, DigestTimer, messageQueue,
-      staffApi, logger, ActiveUser, config.socketConnectionURL, activityList
-    );
-    logger.info('started');
-    worker.beginWork();
-
-    return Q.resolve();
-  });
+  const worker = new WorkerActivity(
+    Q, Websocket, DigestTimer, messageQueue,
+    StaffApi, logger, ActiveUser, config.socketConnectionURL,
+    requestStats, restify, config.apiUrl, contentProvider, activityList
+  );
+  logger.info('started');
+  worker.beginWork();
 
   process.on('SIGTERM', () => {
     logger.info('terminated');
