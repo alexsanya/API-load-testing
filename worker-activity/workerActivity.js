@@ -82,7 +82,9 @@
         })
         .then((authData) => {
           this.logger.info('Authorization...', authData);
-          return this.staffApi.signUp(this.q, this.requestStats, this.contentProvider, this.restify,  this.apiUrl, authData)
+          return this.staffApi.signUp(this.q, this.requestStats, this.contentProvider, this.restify,  this.apiUrl, authData, {
+            'X-Company-ID': nameDepartment,
+          })
         })
         .then((staffApi) => {
           let deferred = this.q.defer();
@@ -94,7 +96,7 @@
           return deferred.promise;
         })
         .then(({staffApi, connection}) => {
-          this.logger.info('established socket connection ', connection);
+          this.logger.info('established socket connection ');
           
           return new this.ActiveUser(
             connection,
