@@ -5,7 +5,7 @@ const restify = require('./node_modules/restify');
 const logUpdate = require('./node_modules/log-update');
 const simpleNodeLogger = require('./node_modules/simple-node-logger');
 const staffApi = require('../lib/staffAPI');
-const getMessageQueue = require('../lib/messageQueue');
+const messageQueue = require('../lib/messageQueue')(kue);
 const getWorkerGroupStats = require('../lib/workerGroupStats');
 const contentProvider = require('../lib/contentProvider')(faker);
 const DryRunProcess = require('./dryRunProcess');
@@ -45,8 +45,6 @@ const authInfo = require('./config');
 
   log.setLevel('info');
   log.info('API test master process launched with congig:\n', config);
-
-  const messageQueue = getMessageQueue(kue);
 
   messageQueue.on('statsData', workerGroupStats.adjustStats.bind(workerGroupStats));
 

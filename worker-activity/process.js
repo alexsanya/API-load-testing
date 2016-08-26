@@ -8,7 +8,7 @@ const faker = require('./node_modules/faker');
 const kue = require('./node_modules/kue');
 const DigestTimer = require('../lib/digestTimer');
 const WorkerLogger = require('../lib/workerLogger');
-const getMessageQueue = require('../lib/messageQueue');
+const messageQueue = require('../lib/messageQueue')(kue);
 const createRequestStats = require('../lib/requestStats').create;
 const contentProvider = require('../lib/contentProvider')(faker);
 const WorkerActivity = require('./workerActivity');
@@ -41,7 +41,6 @@ log.info('Worker process launched with congig:\n', config);
 
 function start(workerId) {
   const logger = new WorkerLogger(workerId, log);
-  const messageQueue = getMessageQueue(kue);
   const requestStatsCfg = {
     slowRequestMs: config.slowRequestMs,
     avgInfoIntervalMs: config.avgInfoIntervalMs,

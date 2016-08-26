@@ -11,7 +11,7 @@ const authInfo = require('./config');
 const WorkerCreator = require('./workerCreator');
 const createRequestStats = require('../lib/requestStats').create;
 const contentProvider = require('../lib/contentProvider')(faker);
-const getMessageQueue = require('../lib/messageQueue');
+const messageQueue = require('../lib/messageQueue')(kue);
 const WorkerLogger = require('../lib/workerLogger');
 
 const args = process.argv.slice(2);
@@ -38,8 +38,6 @@ function start(workerId) {
   const logger = new WorkerLogger(workerId, log);
 
   logger.info(`process started with pid: ${process.pid}`);
-
-  const messageQueue = getMessageQueue(kue);
 
   const requestStatsParams = {
     slowRequestMs: config.slowRequestMs,
