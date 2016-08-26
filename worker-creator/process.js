@@ -10,7 +10,7 @@ const getStaffApiByToken = require('../lib/staffAPI').getStaffApiByToken;
 const authInfo = require('./config');
 const WorkerCreator = require('./workerCreator');
 const createRequestStats = require('../lib/requestStats').create;
-const createContentProvider = require('../lib/contentProvider').create;
+const contentProvider = require('../lib/contentProvider')(faker);
 const getMessageQueue = require('../lib/messageQueue');
 const WorkerLogger = require('../lib/workerLogger');
 
@@ -40,7 +40,6 @@ function start(workerId) {
   logger.info(`process started with pid: ${process.pid}`);
 
   const messageQueue = getMessageQueue(kue);
-  const contentProvider = createContentProvider(faker);
 
   const requestStatsParams = {
     slowRequestMs: config.slowRequestMs,

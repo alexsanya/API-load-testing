@@ -7,7 +7,7 @@ const simpleNodeLogger = require('./node_modules/simple-node-logger');
 const staffApi = require('../lib/staffAPI');
 const getMessageQueue = require('../lib/messageQueue');
 const getWorkerGroupStats = require('../lib/workerGroupStats');
-const createContentProvider = require('../lib/contentProvider').create;
+const contentProvider = require('../lib/contentProvider')(faker);
 const DryRunProcess = require('./dryRunProcess');
 const MasterProcess = require('./masterProcess');
 const authInfo = require('./config');
@@ -53,7 +53,6 @@ const authInfo = require('./config');
   if (config.isDryRun) {
     const dryRunLog = simpleNodeLogger.createSimpleLogger();
     dryRunLog.setLevel('info');
-    const contentProvider = createContentProvider(faker, authInfo);
     const dryRunProcess =
       new DryRunProcess(Q, dryRunLog, staffApi, contentProvider, restify, config.apiUrl);
     dryRunProcess.listenWorkers();

@@ -10,7 +10,7 @@ const DigestTimer = require('../lib/digestTimer');
 const WorkerLogger = require('../lib/workerLogger');
 const getMessageQueue = require('../lib/messageQueue');
 const createRequestStats = require('../lib/requestStats').create;
-const createContentProvider = require('../lib/contentProvider').create;
+const contentProvider = require('../lib/contentProvider')(faker);
 const WorkerActivity = require('./workerActivity');
 const ActiveUser = require('./activeUser');
 const activityList = require('./activityList');
@@ -64,7 +64,6 @@ function start(workerId) {
   };
 
   const requestStats = createRequestStats(Q, uid, requestStatsCfg);
-  const contentProvider = createContentProvider(faker, config.auth);
   const worker = new WorkerActivity(
     Q, Websocket, DigestTimer, messageQueue,
     StaffApi, logger, ActiveUser, config.socketConnectionURL,
