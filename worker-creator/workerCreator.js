@@ -40,7 +40,7 @@
     createCompany(data) {
       return this.staffApi.createCompany()
         .then((companyData) => {
-          this.logger.info(`created company with id ${companyData.id}`);
+          this.logger.info(`created company ${companyData.name}`);
           this.companiesCreated.push(companyData.id);
           return companyData.id;
         })
