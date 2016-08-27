@@ -6,7 +6,7 @@ const logUpdate = require('./node_modules/log-update');
 const simpleNodeLogger = require('./node_modules/simple-node-logger');
 const staffApi = require('../lib/staffAPI');
 const messageQueue = require('../lib/messageQueue')(kue);
-const getWorkerGroupStats = require('../lib/workerGroupStats');
+const workerGroupStats = require('../lib/workerGroupStats')(Q, logUpdate);
 const contentProvider = require('../lib/contentProvider')(faker);
 const DryRunProcess = require('./dryRunProcess');
 const MasterProcess = require('./masterProcess');
@@ -40,8 +40,6 @@ const authInfo = require('./config');
       setTimeout(process.exit, 1000);
     },
   };
-
-  const workerGroupStats = getWorkerGroupStats(Q, logUpdate);
 
   log.setLevel('info');
   log.info('API test master process launched with congig:\n', config);
