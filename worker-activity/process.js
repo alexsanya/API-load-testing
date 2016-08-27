@@ -9,7 +9,7 @@ const kue = require('./node_modules/kue');
 const DigestTimer = require('../lib/digestTimer');
 const WorkerLogger = require('../lib/workerLogger');
 const messageQueue = require('../lib/messageQueue')(kue);
-const createRequestStats = require('../lib/requestStats').create;
+const createRequestStats = require('../lib/requestStats')(Q, uid);
 const contentProvider = require('../lib/contentProvider')(faker);
 const WorkerActivity = require('./workerActivity');
 const ActiveUser = require('./activeUser');
@@ -62,7 +62,7 @@ function start(workerId) {
     },
   };
 
-  const requestStats = createRequestStats(Q, uid, requestStatsCfg);
+  const requestStats = createRequestStats(requestStatsCfg);
   const worker = new WorkerActivity(
     Q, Websocket, DigestTimer, messageQueue,
     StaffApi, logger, ActiveUser, config.socketConnectionURL,

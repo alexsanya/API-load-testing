@@ -9,7 +9,7 @@ const signUp = require('../lib/staffAPI').signUp;
 const getStaffApiByToken = require('../lib/staffAPI').getStaffApiByToken;
 const authInfo = require('./config');
 const WorkerCreator = require('./workerCreator');
-const createRequestStats = require('../lib/requestStats').create;
+const createRequestStats = require('../lib/requestStats')(q, uid);
 const contentProvider = require('../lib/contentProvider')(faker);
 const messageQueue = require('../lib/messageQueue')(kue);
 const WorkerLogger = require('../lib/workerLogger');
@@ -61,7 +61,7 @@ function start(workerId) {
   };
 
   let worker;
-  const requestStats = createRequestStats(q, uid, requestStatsParams);
+  const requestStats = createRequestStats(requestStatsParams);
 
   signUp(q, requestStats, contentProvider, restify, config.apiUrl, authInfo).then((staffApi) => {
     logger.info('authorized');
