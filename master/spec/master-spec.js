@@ -6,7 +6,7 @@
   const expect = chai.expect;
   const assert = chai.assert;
 
-  let MasterProcess = require('../masterProcess.js');
+  let MasterProcess = require('../masterProcess');
 
   describe('master process', () => {
     let mockMQ = {};
