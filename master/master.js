@@ -36,7 +36,7 @@ const authInfo = require('./config');
     numberOfCompanies: parseInt(args[3], 10),
     usersPerCompany: parseInt(args[4], 10),
     onFinish: (statsInfo) => {
-      messageQueue.shutdown(5000, function(err) {
+      messageQueue.shutdown((err) => {
         log.info('Testing results:\n ', statsInfo);
         process.stdout.write('Test finished', err || '');
         process.exit(0);
