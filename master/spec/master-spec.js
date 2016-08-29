@@ -56,12 +56,6 @@
       }));
     });
 
-    it('should adjust stats when new data arrives', () => {
-      let master = new MasterProcess(Q, mockMQ, mockWGStats, config, mockLogger);
-      master.listen();
-      assert(mockMQ.on.calledWith('statsData'));
-    });
-
   });
 
 })();
