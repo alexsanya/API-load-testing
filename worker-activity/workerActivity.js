@@ -101,8 +101,7 @@
           return new this.ActiveUser(
             connection,
             staffApi,
-            nameDepartment,
-            typeDepartment
+            ['lazy', 'normal', 'effective'][this.contentProvider.getRandomInt(0, 2)]
           );
         
         });

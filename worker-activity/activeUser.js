@@ -2,10 +2,9 @@
   'use strict';
 
   class ActiveUser {
-    constructor(socketConnection, staffApi, typeDepartment, nameDepartment) {
+    constructor(socketConnection, staffApi, performance) {
       this.staffApi = staffApi;
-      this.typeDepartment = typeDepartment;
-      this.nameDepartment = nameDepartment;
+      this.performance = performance;
       this.socketConnection = socketConnection;
     }
 
@@ -14,7 +13,7 @@
     }
 
     sendActivityRequest(config) {
-      return this.staffApi.sendUserActivity(config, this.typeDepartment, this.nameDepartment);
+      return this.staffApi.sendUserActivity(config, this.performance);
     }
   }
 
