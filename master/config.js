@@ -2,7 +2,7 @@
   'use strict';
 
   const auth = {
-    email: 'tryit@staff.dev',
+    email: 'load-test-final-1@staff.dev',
     password: 'loadtest',
   };
 
