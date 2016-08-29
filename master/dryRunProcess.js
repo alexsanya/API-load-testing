@@ -11,21 +11,41 @@
       this.apiUrl = apiUrl;
     }
 
-    logIn() {
+    logIn(authInfo) {
       const requestStats = {
-        addStatsMiddleware: (promise) => promise,
+        addStatsMiddleware: (promise) => {
+          return promise.then((res) => {
+            return res.data;
+          })
+          .catch((res) => {
+            return this.q.reject(res);
+          });
+        },
       };
 
       return this.staffApi
-        .signUp(this.q, requestStats, this.contentProvider, this.restify, this.apiUrl)
-        .then((res) => this.staffApi
-              .getStaffApiByToken(this.q, requestStats, this.contentProvider,
-                this.restify, this.apiUrl, res.data.token)
-        );
+        .signUp(this.q, requestStats, this.contentProvider, this.restify, this.apiUrl, authInfo);
     }
 
     checkApi(staffApi) {
       let companyId;
+
+      const config = {
+        apps: [
+          {
+            name: 'gedit',
+            titles: ['document1', 'readme.txt', 'some file'],
+          },
+          {
+            name: 'staff.com',
+            titles: ['title', 'web inspector', 'workspaces'],
+          },
+          {
+            name: 'sublime',
+            titles: ['index.js', 'app.js', 'readme.txt'],
+          },
+        ],
+      };
 
       const showResponseCode = ({ data, detailInfo }) => {
         this.log.info('Code: ', detailInfo.response.code);
@@ -36,14 +56,18 @@
       return staffApi.createCompany()
         .then(showResponseCode)
         .then((companyData) => {
-          companyId = companyData.id;
+          this.log.info('Create workspace');
+          return staffApi.createWorkspace(companyData.id);
+        })
+        .then(showResponseCode)
+        .then((workspaceData) => {
           this.log.info('Invite user');
-          return staffApi.inviteUser(companyData);
+          return staffApi.inviteUser(workspaceData.id);
         })
         .then(showResponseCode)
         .then(() => {
           this.log.info('Send user activity');
-          return staffApi.sendUserActivity('company', companyId);
+          return staffApi.sendUserActivity(config, 'company', companyId);
         })
         .then(showResponseCode)
         .then(() => {
@@ -55,14 +79,6 @@
           this.log.info('Code: ', detailInfo.response.code);
           this.log.info(detailInfo);
         });
-    }
-
-    listenWorkers() {
-
-    }
-
-    gerWorkersInfo() {
-
     }
   }
 

@@ -2,8 +2,8 @@
   'use strict';
 
   const auth = {
-    email: 'kovalas@narod.ru',
-    password: 'staff.com',
+    email: 'tryit@staff.dev',
+    password: 'loadtest',
   };
 
   module.exports = auth;

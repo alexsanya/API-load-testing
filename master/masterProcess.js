@@ -43,7 +43,6 @@
         this.logger.warn('Failed request ', info);
         return this.q.resolve();
       });
-      this.messageQueue.on('statsData', this.workerGroupStats.adjustStats.bind(this.workerGroupStats));
     }
   }
 

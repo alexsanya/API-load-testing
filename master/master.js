@@ -36,34 +36,50 @@ const authInfo = require('./config');
     numberOfCompanies: parseInt(args[3], 10),
     usersPerCompany: parseInt(args[4], 10),
     onFinish: (statsInfo) => {
-      log.info('Testing results:\n ', statsInfo);
-      setTimeout(process.exit, 1000);
+      messageQueue.shutdown(5000, function(err) {
+        log.info('Testing results:\n ', statsInfo);
+        process.stdout.write('Test finished', err || '');
+        process.exit(0);
+      });
     },
   };
 
   log.setLevel('info');
   log.info('API test master process launched with congig:\n', config);
 
+  messageQueue.on('statsData', workerGroupStats.adjustStats.bind(workerGroupStats));
+
   if (config.isDryRun) {
     const dryRunLog = simpleNodeLogger.createSimpleLogger();
     dryRunLog.setLevel('info');
     const dryRunProcess =
       new DryRunProcess(Q, dryRunLog, staffApi, contentProvider, restify, config.apiUrl);
-    dryRunProcess.listenWorkers();
-    dryRunProcess.logIn()
+    dryRunProcess.logIn(authInfo)
       .catch((err) => {
         dryRunLog.info('Unable to log in:\n', err);
-        setTimeout(process.exit, 1000);
+        setTimeout(process.exit, 500);
+      })
+      .then((staffApi) => {
+        staffApi.requestStats = {
+          addStatsMiddleware: (promise) => promise,
+        }
+
+        return staffApi;
       })
       .then(dryRunProcess.checkApi.bind(dryRunProcess))
       .then(() => {
+        const workersList = workerGroupStats.getWorkersAmount();
+        if (!workersList.length) {
+          dryRunLog.info('No workers online');
+          return;
+        }
         dryRunLog.info('Amount of workers:');
-        workerGroupStats.getWorkersAmount().forEach(({ worker, number }) => {
+        workersList.forEach(({ worker, number }) => {
           dryRunLog.info(`${worker}: ${number}`);
         });
       })
       .then(() => {
-        setTimeout(process.exit, 3000);
+        setTimeout(process.exit, 500);
       });
   } else {
     const masterProcess = new MasterProcess(Q, messageQueue, workerGroupStats, config, log);
