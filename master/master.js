@@ -44,8 +44,6 @@ const authInfo = require('./config');
   log.setLevel('info');
   log.info('API test master process launched with congig:\n', config);
 
-  messageQueue.on('statsData', workerGroupStats.adjustStats.bind(workerGroupStats));
-
   if (config.isDryRun) {
     const dryRunLog = simpleNodeLogger.createSimpleLogger();
     dryRunLog.setLevel('info');
