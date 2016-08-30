@@ -5,7 +5,7 @@ const restify = require('restify');
 const logUpdate = require('log-update');
 const simpleNodeLogger = require('simple-node-logger');
 const staffApi = require('../lib/staffAPI');
-const messageQueue = require('../lib/messageQueue')(kue);
+const messageQueue = require('../lib/messageQueue')(kue, process.env.REDIS_URL);
 const workerGroupStats = require('../lib/workerGroupStats')(process, Q, logUpdate);
 const contentProvider = require('../lib/contentProvider')(faker);
 const DryRunProcess = require('./dryRunProcess');
@@ -17,10 +17,20 @@ const authInfo = require('../config').auth;
 
   const args = process.argv.slice(2);
 
-  if (args.length < 5) {
+  if (args.length < 3) {
     process.stdout.write('Command line arguments are required\n');
-    process.stdout.write('babel-node master.js master.js {isDryRun} {apiUrl} ' +
-      '{testTime} {numberOfCompanies} {usersPerCompany}\n');
+    process.stdout.write('babel-node master.js master.js {isDryRun} ' +
+      '{numberOfCompanies} {usersPerCompany}\n');
+    process.exit();
+  }
+
+  if (!process.env.API_URL) {
+    process.stdout.write('API_URL is not defined\n');
+    process.exit();
+  }
+
+  if (!process.env.TIME) {
+    process.stdout.write('TIME is not defined\n');
     process.exit();
   }
 
@@ -31,10 +41,10 @@ const authInfo = require('../config').auth;
 
   const config = {
     isDryRun: (args[0] === 'true'),
-    apiUrl: args[1],
-    testTime: parseInt(args[2], 10),
-    numberOfCompanies: parseInt(args[3], 10),
-    usersPerCompany: parseInt(args[4], 10),
+    apiUrl: process.env.API_URL,
+    testTime: process.env.TIME,
+    numberOfCompanies: parseInt(args[1], 10),
+    usersPerCompany: parseInt(args[2], 10),
     onFinish: (statsInfo) => {
       messageQueue.shutdown((err) => {
         log.info('Testing results:\n ', statsInfo);
