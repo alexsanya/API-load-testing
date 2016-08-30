@@ -11,32 +11,30 @@ const WorkerLogger = require('../lib/workerLogger');
 const messageQueue = require('../lib/messageQueue')(kue, process.env.REDIS_URL);
 const createRequestStats = require('../lib/requestStats')(process, Q, uid);
 const contentProvider = require('../lib/contentProvider')(faker);
-const WorkerActivity = require('./workerActivity');
-const ActiveUser = require('./activeUser');
-const activityList = require('../config');
 const StaffApi = require('../lib/staffAPI');
+const ActiveUser = require('./activeUser');
+const activityConfig = require('../config');
+const WorkerActivity = require('./workerActivity')
+  (Q, Websocket, DigestTimer, messageQueue, StaffApi, ActiveUser, restify, contentProvider, activityConfig);
 
 const args = process.argv.slice(2);
 
-if (args.length < 4) {
+if (args.length < 2) {
   process.stdout.write('Command line arguments are required\n');
-  process.stdout.write('babel-node process.js ' +
-      '{ApiUrl} {socketConnectionURL} {concurrency} {slowResponseTime}\n');
+  process.stdout.write('babel-node process.js {concurrency} {slowResponseTime}\n');
   process.exit();
 }
 
 const config = {
-  apiUrl: args[0],
-  socketConnectionURL: args[1],
-  concurrency: parseInt(args[2], 10),
-  slowRequestMs: parseInt(args[3], 10),
+  concurrency: parseInt(args[0], 10),
+  slowRequestMs: parseInt(args[1], 10),
   avgInfoIntervalMs: 3000,
 };
 
 const log = simpleNodeLogger.createSimpleLogger();
 log.setLevel('info');
 
-log.info('Worker process launched with congig:\n', config);
+log.info('Worker process launched with config:\n', config);
 
 function start(workerId) {
   const logger = new WorkerLogger(workerId, log);
@@ -62,11 +60,7 @@ function start(workerId) {
   };
 
   const requestStats = createRequestStats(requestStatsCfg);
-  const worker = new WorkerActivity(
-    Q, Websocket, DigestTimer, messageQueue,
-    StaffApi, logger, ActiveUser, config.socketConnectionURL,
-    requestStats, restify, config.apiUrl, contentProvider, activityList
-  );
+  const worker = new WorkerActivity(requestStats, logger);
   logger.info('started');
   worker.beginWork();
 

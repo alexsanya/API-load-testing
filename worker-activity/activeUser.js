@@ -2,8 +2,8 @@
   'use strict';
 
   class ActiveUser {
-    constructor(socketConnection, staffApi, performance) {
-      this.staffApi = staffApi;
+    constructor(apiConnection, socketConnection, performance) {
+      this.staffApi = apiConnection;
       this.performance = performance;
       this.socketConnection = socketConnection;
     }
