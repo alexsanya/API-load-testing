@@ -5,27 +5,26 @@ const throng = require('throng');
 const simpleNodeLogger = require('simple-node-logger');
 const faker = require('faker');
 const kue = require('kue');
-const signUp = require('../lib/staffAPI').signUp;
+const staffApi = require('../lib/staffAPI');
 const getStaffApiByToken = require('../lib/staffAPI').getStaffApiByToken;
 const authInfo = require('../config').auth;
-const WorkerCreator = require('./workerCreator');
 const createRequestStats = require('../lib/requestStats')(process, q, uid);
 const contentProvider = require('../lib/contentProvider')(faker);
+const WorkerCreator = require('./workerCreator')(q, contentProvider, restify, authInfo);
 const messageQueue = require('../lib/messageQueue')(kue, process.env.REDIS_URL);
 const WorkerLogger = require('../lib/workerLogger');
 
 const args = process.argv.slice(2);
 
-if (args.length < 3) {
+if (args.length < 2) {
   process.stdout.write('Command line arguments are required\n');
-  process.stdout.write('node process.js {ApiUrl} {concurrency} {slowResponseTime}\n');
+  process.stdout.write('node process.js {concurrency} {slowResponseTime}\n');
   process.exit();
 }
 
 const config = {
-  apiUrl: args[0],
-  concurrency: parseInt(args[1], 10),
-  slowRequestMs: parseInt(args[2], 10),
+  concurrency: parseInt(args[0], 10),
+  slowRequestMs: parseInt(args[1], 10),
   avgInfoIntervalMs: 3000,
 };
 
@@ -63,13 +62,8 @@ function start(workerId) {
   let worker;
   const requestStats = createRequestStats(requestStatsParams);
 
-  signUp(q, requestStats, contentProvider, restify, config.apiUrl, authInfo).then((staffApi) => {
-    logger.info('authorized');
-    worker = new WorkerCreator(messageQueue, staffApi, q, logger);
-    worker.beginWork();
-  }).catch((err) => {
-    logger.error('Error during sign up', err);
-  });
+  worker = new WorkerCreator(requestStats, messageQueue, staffApi, logger);
+  worker.beginWork();
 
   process.on('SIGTERM', () => {
     logger.info('termination started...');

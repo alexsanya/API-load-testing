@@ -26,6 +26,8 @@
     sendJobs() {
       const job = {
         numOfUsers: this.config.usersPerCompany,
+        apiUrl: this.config.apiUrl,
+        socketUrl: this.config.socketUrl,
       };
 
       for (let i = 0; i < this.config.numberOfCompanies; i++) {

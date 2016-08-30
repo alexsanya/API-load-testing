@@ -24,15 +24,12 @@ const authInfo = require('../config').auth;
     process.exit();
   }
 
-  if (!process.env.API_URL) {
-    process.stdout.write('API_URL is not defined\n');
-    process.exit();
-  }
-
-  if (!process.env.TIME) {
-    process.stdout.write('TIME is not defined\n');
-    process.exit();
-  }
+  ['API_URL', 'TIME', 'SOCKET_URL'].forEach((envVar) => {
+    if (!process.env[envVar]) {
+      process.stdout.write(`${envVar} is not defined\n`);
+      process.exit();
+    }
+  });
 
   const log = simpleNodeLogger.createSimpleFileLogger({
     logFilePath: 'apiLoadTesting.log',
@@ -42,6 +39,7 @@ const authInfo = require('../config').auth;
   const config = {
     isDryRun: (args[0] === 'true'),
     apiUrl: process.env.API_URL,
+    socketUrl: process.env.SOCKET_URL,
     testTime: process.env.TIME,
     numberOfCompanies: parseInt(args[1], 10),
     usersPerCompany: parseInt(args[2], 10),
