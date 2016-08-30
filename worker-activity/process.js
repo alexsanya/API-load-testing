@@ -1,11 +1,11 @@
-const Q = require('./node_modules/q');
-const uid = require('./node_modules/uid');
-const Websocket = require('./node_modules/websocket');
-const restify = require('./node_modules/restify');
-const throng = require('./node_modules/throng');
-const simpleNodeLogger = require('./node_modules/simple-node-logger');
-const faker = require('./node_modules/faker');
-const kue = require('./node_modules/kue');
+const Q = require('q');
+const uid = require('uid');
+const Websocket = require('websocket');
+const restify = require('restify');
+const throng = require('throng');
+const simpleNodeLogger = require('simple-node-logger');
+const faker = require('faker');
+const kue = require('kue');
 const DigestTimer = require('../lib/digestTimer');
 const WorkerLogger = require('../lib/workerLogger');
 const messageQueue = require('../lib/messageQueue')(kue);
@@ -13,7 +13,7 @@ const createRequestStats = require('../lib/requestStats')(process, Q, uid);
 const contentProvider = require('../lib/contentProvider')(faker);
 const WorkerActivity = require('./workerActivity');
 const ActiveUser = require('./activeUser');
-const activityList = require('./activityList');
+const activityList = require('../config');
 const StaffApi = require('../lib/staffAPI');
 
 const args = process.argv.slice(2);
@@ -21,8 +21,7 @@ const args = process.argv.slice(2);
 if (args.length < 4) {
   process.stdout.write('Command line arguments are required\n');
   process.stdout.write('babel-node process.js ' +
-      '{ApiUrl} {socketConnectionURL} {concurrency} {slowResponseTime} ' +
-      '--presets es2015,stage-2\n');
+      '{ApiUrl} {socketConnectionURL} {concurrency} {slowResponseTime}\n');
   process.exit();
 }
 

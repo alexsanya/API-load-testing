@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const config = require('../config');
+
   class DryRunProcess {
     constructor(q, log, staffApi, contentProvider, restify, apiUrl) {
       this.q = q;
@@ -30,23 +32,6 @@
     checkApi(staffApi) {
       let companyId;
 
-      const config = {
-        apps: [
-          {
-            name: 'gedit',
-            titles: ['document1', 'readme.txt', 'some file'],
-          },
-          {
-            name: 'staff.com',
-            titles: ['title', 'web inspector', 'workspaces'],
-          },
-          {
-            name: 'sublime',
-            titles: ['index.js', 'app.js', 'readme.txt'],
-          },
-        ],
-      };
-
       const showResponseCode = ({ data, detailInfo }) => {
         this.log.info('Code: ', detailInfo.response.code);
         return data;
@@ -67,7 +52,7 @@
         .then(showResponseCode)
         .then(() => {
           this.log.info('Send user activity');
-          return staffApi.sendUserActivity(config, 'company', companyId);
+          return staffApi.sendUserActivity(config, 'normal');
         })
         .then(showResponseCode)
         .then(() => {
