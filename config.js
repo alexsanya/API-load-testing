@@ -23,14 +23,16 @@
             titles: ['song.mp3', 'film.mp4', 'my_playlist'],
           },
           {
-            name: 'nba.com',  
+            name: 'Chromium',  
+            titles: ['nba.com'],
             urls: ['http://stats.nba.com/players/?ls=iref:nba:gnav',
               'http://www.nba.com/celtics/?ls=iref:nba:gnav',
               'http://www.nba.com/celtics/video/channel/team_originals'
             ],
           },
           {
-            name: 'youtube.com',
+            name: 'Firefox',
+            titles: ['youtube.com'],
             urls: ['https://www.youtube.com/watch?v=VgauRf2dB1k',
               'https://www.youtube.com/watch?v=aQkzKh649cw',
               'https://www.youtube.com/watch?v=ml7f14t19fk'
@@ -39,21 +41,24 @@
         ],
         productive: [
           {
-            name: 'logentries.com',
+            name: 'Safari',
+            titles: ['logentries.com'],
             urls: ['https://docs.logentries.com/docs/best-practices-logs',
               'https://logentries.com/product/',
               'https://logentries.com/resources/webinars/'
             ],
           },
           {
-            name: 'doc.qt.io',
+            name: 'Chrome',
+            titles: ['doc.qt.io'],
             urls: ['http://doc.qt.io/qt-5/overviews-main.html',
               'https://www.qt.io/services/',
               'https://www.qt.io/developers/'
             ],
           },
           {
-            name: 'screencast.com',
+            name: 'Firefox',
+            titles: ['screencast.com'],
             urls: ['http://www.screencast.com/tos.aspx',
               'http://www.screencast.com/pricing.aspx',
               'https://www.screencast.com/keysignup.aspx'

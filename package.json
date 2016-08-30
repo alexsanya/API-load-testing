@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Staff.com api testing",
   "scripts": {
-    "start-dry-run": "node master/master.js true http://td-rest-api.herokuapp.com:80 1800 1 10",
-    "start-master": "node master/master.js false http://td-rest-api.herokuapp.com:80 1800 1 10",
-    "start-worker-creator": "node worker-creator/process.js http://td-rest-api.herokuapp.com:80 1 1000",
-    "start-worker-activity": "node worker-activity/process.js http://td-rest-api.herokuapp.com:80 wss://td-rest-api.herokuapp.com/api/1.0/socket/ 1 1000",
+    "dry-run": "node master/master.js true http://td-rest-api.herokuapp.com:80 1800 1 10",
+    "master": "node master/master.js false http://td-rest-api.herokuapp.com:80 1800 1 10",
+    "worker-creator": "node worker-creator/process.js http://td-rest-api.herokuapp.com:80 1 1000",
+    "worker-activity": "node worker-activity/process.js http://td-rest-api.herokuapp.com:80 wss://td-rest-api.herokuapp.com/api/1.0/socket/ 1 1000",
     "test": "mocha **/spec"
   },
   "keywords": [
