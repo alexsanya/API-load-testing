@@ -10,6 +10,7 @@ WORKDIR /$user/src/app
 
 # Install app dependencies
 COPY package.json /$user/src/app/
+COPY npm-shrinkwrap.json /$user/src/app/
 RUN npm install
 
 # Bundle app source

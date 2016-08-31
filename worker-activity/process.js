@@ -2,7 +2,6 @@ const Q = require('q');
 const uid = require('uid');
 const Websocket = require('websocket');
 const restify = require('restify');
-const throng = require('throng');
 const simpleNodeLogger = require('simple-node-logger');
 const faker = require('faker');
 const kue = require('kue');
@@ -19,15 +18,14 @@ const WorkerActivity = require('./workerActivity')
 
 const args = process.argv.slice(2);
 
-if (args.length < 2) {
+if (args.length < 1) {
   process.stdout.write('Command line arguments are required\n');
-  process.stdout.write('babel-node process.js {concurrency} {slowResponseTime}\n');
+  process.stdout.write('node process.js {slowResponseTime}\n');
   process.exit();
 }
 
 const config = {
-  concurrency: parseInt(args[0], 10),
-  slowRequestMs: parseInt(args[1], 10),
+  slowRequestMs: parseInt(args[0], 10),
   avgInfoIntervalMs: 3000,
 };
 
@@ -70,7 +68,4 @@ function start(workerId) {
   });
 }
 
-throng({
-  start,
-  workers: config.concurrency,
-});
+start(1);

@@ -17,13 +17,6 @@ const authInfo = require('../config').auth;
 
   const args = process.argv.slice(2);
 
-  ['API_URL', 'TIME', 'SOCKET_URL'].forEach((envVar) => {
-    if (!process.env[envVar]) {
-      process.stdout.write(`${envVar} is not defined\n`);
-      process.exit();
-    }
-  });
-
   const log = simpleNodeLogger.createSimpleFileLogger({
     logFilePath: 'apiLoadTesting.log',
     timestampFormat: 'YYYY-MM-DD HH:mm:ss.SSS',
@@ -31,9 +24,9 @@ const authInfo = require('../config').auth;
 
   const config = {
     isDryRun: (args.length && args[0] === 'dry'),
-    apiUrl: process.env.API_URL,
-    socketUrl: process.env.SOCKET_URL,
-    testTime: parseInt(process.env.TIME, 10),
+    apiUrl: process.env.API_URL || 'http://td-rest-api.herokuapp.com:80',
+    socketUrl: process.env.SOCKET_URL || 'wss://td-rest-api.herokuapp.com/api/1.0/socket/',
+    testTime: parseInt(process.env.TIME, 10) || 1800,
     numberOfCompanies: parseInt(process.env.NUMBER_COMPANIES, 10) || 1,
     usersPerCompany: parseInt(process.env.NUMBER_USERS, 10) || 100,
     onFinish: (statsInfo) => {

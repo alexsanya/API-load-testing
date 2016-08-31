@@ -7,7 +7,11 @@ services:
   
     environment:
       - REDIS_URL=redis
-
+      - API_URL=http://td-rest-api.herokuapp.com:80
+      - SOCKET_URL=wss://td-rest-api.herokuapp.com/api/1.0/socket/
+      - TIME=1800
+      - NUMBER_COMPANIES=1
+      - NUMBER_USERS=100
     depends_on:
      - worker-creator
      - worker-activity

@@ -823,11 +823,6 @@
       "from": "lodash.cond@>=4.3.0 <5.0.0",
       "resolved": "https://registry.npmjs.org/lodash.cond/-/lodash.cond-4.5.2.tgz"
     },
-    "lodash.defaults": {
-      "version": "4.2.0",
-      "from": "lodash.defaults@>=4.0.1 <5.0.0",
-      "resolved": "https://registry.npmjs.org/lodash.defaults/-/lodash.defaults-4.2.0.tgz"
-    },
     "lodash.endswith": {
       "version": "4.2.1",
       "from": "lodash.endswith@>=4.0.1 <5.0.0",
@@ -1453,11 +1448,6 @@
       "version": "0.2.0",
       "from": "text-table@>=0.2.0 <0.3.0",
       "resolved": "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
-    },
-    "throng": {
-      "version": "4.0.0",
-      "from": "throng@>=4.0.0 <5.0.0",
-      "resolved": "https://registry.npmjs.org/throng/-/throng-4.0.0.tgz"
     },
     "through": {
       "version": "2.3.8",

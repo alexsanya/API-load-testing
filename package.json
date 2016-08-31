@@ -5,8 +5,8 @@
   "scripts": {
     "dry-run": "node master/master.js dry",
     "master": "node master/master.js",
-    "worker-creator": "node worker-creator/process.js 1 1000",
-    "worker-activity": "node worker-activity/process.js 1 1000",
+    "worker-creator": "node worker-creator/process.js 1000",
+    "worker-activity": "node worker-activity/process.js 1000",
     "test": "mocha **/spec"
   },
   "keywords": [
@@ -25,7 +25,6 @@
   "dependencies": {
     "faker": "^3.1.0",
     "kue": "^0.11.1",
-    "throng": "^4.0.0",
     "log-update": "^1.0.2",
     "q": "^1.4.1",
     "uid": "0.0.2",
