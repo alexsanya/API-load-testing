@@ -13,6 +13,9 @@ services:
      - worker-creator
      - worker-activity
 
+    links:
+     - redis
+
   worker-creator:
     build: .
     command: "npm run worker-creator"
@@ -24,6 +27,8 @@ services:
      - redis
      - worker-activity
 
+    links:
+     - redis
 
   worker-activity:
     build: .
@@ -33,6 +38,9 @@ services:
       - REDIS_URL= redis://redis
 
     depends_on:
+     - redis
+
+    links:
      - redis
   
   redis:
