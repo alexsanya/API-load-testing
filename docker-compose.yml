@@ -6,7 +6,7 @@ services:
     command: "npm run master"
   
     environment:
-      - REDIS_URL=redis
+      - REDIS_HOST=redis
       - API_URL=http://td-rest-api.herokuapp.com:80
       - SOCKET_URL=wss://td-rest-api.herokuapp.com/api/1.0/socket/
       - TIME=1800
@@ -24,7 +24,7 @@ services:
     command: "npm run worker-creator"
 
     environment:
-      - REDIS_URL=redis
+      - REDIS_HOST=redis
 
     depends_on:
      - worker-activity
@@ -37,7 +37,7 @@ services:
     command: "npm run worker-activity"
 
     environment:
-      - REDIS_URL=redis
+      - REDIS_HOST=redis
 
     links:
      - redis

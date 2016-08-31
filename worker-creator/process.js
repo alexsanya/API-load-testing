@@ -10,7 +10,7 @@ const authInfo = require('../config').auth;
 const createRequestStats = require('../lib/requestStats')(process, q, uid);
 const contentProvider = require('../lib/contentProvider')(faker);
 const WorkerCreator = require('./workerCreator')(q, contentProvider, restify, authInfo);
-const messageQueue = require('../lib/messageQueue')(kue, process.env.REDIS_URL);
+const messageQueue = require('../lib/messageQueue')(kue, process.env.REDIS_HOST);
 const WorkerLogger = require('../lib/workerLogger');
 
 const args = process.argv.slice(2);
