@@ -6,10 +6,9 @@ services:
     command: "npm run master"
   
     environment:
-      - REDIS_URL= redis://redis
+      - REDIS_URL=redis
 
     depends_on:
-     - redis
      - worker-creator
      - worker-activity
 
@@ -21,10 +20,9 @@ services:
     command: "npm run worker-creator"
 
     environment:
-      - REDIS_URL= redis://redis
+      - REDIS_URL=redis
 
     depends_on:
-     - redis
      - worker-activity
 
     links:
@@ -35,10 +33,7 @@ services:
     command: "npm run worker-activity"
 
     environment:
-      - REDIS_URL= redis://redis
-
-    depends_on:
-     - redis
+      - REDIS_URL=redis
 
     links:
      - redis
