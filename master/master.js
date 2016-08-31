@@ -17,13 +17,6 @@ const authInfo = require('../config').auth;
 
   const args = process.argv.slice(2);
 
-  if (args.length < 3) {
-    process.stdout.write('Command line arguments are required\n');
-    process.stdout.write('babel-node master.js master.js {isDryRun} ' +
-      '{numberOfCompanies} {usersPerCompany}\n');
-    process.exit();
-  }
-
   ['API_URL', 'TIME', 'SOCKET_URL'].forEach((envVar) => {
     if (!process.env[envVar]) {
       process.stdout.write(`${envVar} is not defined\n`);
@@ -37,12 +30,12 @@ const authInfo = require('../config').auth;
   });
 
   const config = {
-    isDryRun: (args[0] === 'true'),
+    isDryRun: (args.length && args[0] === 'dry'),
     apiUrl: process.env.API_URL,
     socketUrl: process.env.SOCKET_URL,
-    testTime: process.env.TIME,
-    numberOfCompanies: parseInt(args[1], 10),
-    usersPerCompany: parseInt(args[2], 10),
+    testTime: parseInt(process.env.TIME, 10),
+    numberOfCompanies: parseInt(process.env.NUMBER_COMPANIES, 10) || 1,
+    usersPerCompany: parseInt(process.env.NUMBER_USERS, 10) || 100,
     onFinish: (statsInfo) => {
       messageQueue.shutdown((err) => {
         log.info('Testing results:\n ', statsInfo);

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Staff.com api testing",
   "scripts": {
-    "dry-run": "node master/master.js true 1 10",
-    "master": "node master/master.js false 1 10",
+    "dry-run": "node master/master.js dry",
+    "master": "node master/master.js",
     "worker-creator": "node worker-creator/process.js 1 1000",
     "worker-activity": "node worker-activity/process.js 1 1000",
     "test": "mocha **/spec"
@@ -25,12 +25,10 @@
   "dependencies": {
     "faker": "^3.1.0",
     "kue": "^0.11.1",
-    "faker": "^3.1.0",
     "throng": "^4.0.0",
     "log-update": "^1.0.2",
     "q": "^1.4.1",
     "uid": "0.0.2",
-    "restify": "^4.1.1",
     "restify": "^4.1.1",
     "websocket": "^1.0.23",
     "simple-node-logger": "^0.93.12"
