@@ -1,0 +1,39 @@
+version: '2'
+services:
+  
+  master:
+    build: .
+    command: npm run worker-activity
+  
+    environment:
+      - REDIS_URL= redis://redis
+
+    depends_on:
+     - redis
+     - worker-creator
+     - worker-activity
+
+  worker-creator:
+    build: .
+    command: npm run worker-creator
+
+    environment:
+      - REDIS_URL= redis://redis
+
+    depends_on:
+     - redis
+     - worker-activity
+
+
+  worker-activity:
+    build: .
+    command: npm run master
+
+    environment:
+      - REDIS_URL= redis://redis
+
+    depends_on:
+     - redis
+  
+  redis:
+    image: redis
