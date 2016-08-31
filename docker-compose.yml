@@ -3,7 +3,7 @@ services:
   
   master:
     build: .
-    command: npm run worker-activity
+    command: "npm run master"
   
     environment:
       - REDIS_URL= redis://redis
@@ -15,7 +15,7 @@ services:
 
   worker-creator:
     build: .
-    command: npm run worker-creator
+    command: "npm run worker-creator"
 
     environment:
       - REDIS_URL= redis://redis
@@ -27,7 +27,7 @@ services:
 
   worker-activity:
     build: .
-    command: npm run master
+    command: "npm run worker-activity"
 
     environment:
       - REDIS_URL= redis://redis
