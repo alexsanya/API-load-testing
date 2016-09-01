@@ -84,7 +84,13 @@
             socketClient.on('connect', (socketConnection) => {
               deferred.resolve({apiConnection, socketConnection});
             });
+            socketClient.on('connectFailed', (error) => {
+              deferred.reject(error);
+            });
             return deferred.promise;
+          })
+          .catch((error) => {
+            this.logger.error('Socket connection error: ', error);
           })
           .then(({apiConnection, socketConnection}) => {
             this.logger.info('established socket connection ');
