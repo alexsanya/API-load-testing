@@ -3,7 +3,7 @@
 
     const config = {
       auth: {
-        email: 'load-test-final-1@staff.dev',
+        email: 'load-test-final-3@staff.dev',
         password: 'loadtest',
       },
       apps: {
