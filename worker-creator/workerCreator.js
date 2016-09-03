@@ -3,12 +3,13 @@
 
   module.exports = (q, contentProvider, restify, authInfo) => {
     class WorkerCreator {
-      constructor(requestStats, messageQueue, staffApi, logger) {
+      constructor(requestStats, messageQueue, staffApi, logger, syncInvite) {
         this.requestStats = requestStats;
         this.staffApi = staffApi;
         this.messageQueue = messageQueue;
         this.companiesCreated = [];
         this.logger = logger;
+        this.syncInvite = syncInvite;
       }
 
       requestErrorHandler({ err, detailInfo }) {
@@ -16,28 +17,50 @@
         this.messageQueue.push('workerRequestError', detailInfo);
       }
 
-      inviteUsers(data, workspaceId) {
-        const usersRequests = [];
-        const reportNewUser = (companyId, userData) => {
-          const newUserData = {
-            id: userData.userId,
-            name: userData.args.name,
-            email: userData.args.email,
-            company: companyId,
-            apiUrl: data.apiUrl,
-            socketUrl: data.socketUrl,
-          };
-          this.logger.info('user invited', newUserData);
-          this.messageQueue.push('newUser', newUserData);
-          return userData;
+      reportNewUser(companyId, data, userData) {
+        const newUserData = {
+          id: userData.userId,
+          name: userData.args.name,
+          email: userData.args.email,
+          company: companyId,
+          apiUrl: data.apiUrl,
+          socketUrl: data.socketUrl,
         };
+        this.logger.info('user invited', newUserData);
+        this.messageQueue.push('newUser', newUserData);
+        return userData;
+      };
+
+      inviteUsersAsync(data, workspaceId) {
+        const usersRequests = [];
+
         for (let i = 0; i < data.numOfUsers; i++) {
           usersRequests.push(this.apiConnection.inviteUser(workspaceId)
-            .then(reportNewUser.bind(this, workspaceId))
+            .then(this.reportNewUser.bind(this, workspaceId, data))
           );
         }
 
         return q.all(usersRequests);
+      }
+
+      inviteUsersSync(numOfUsers, data, workspaceId) {
+        if (!numOfUsers) {
+          return q.resolve();
+        }
+
+        return this.apiConnection.inviteUser(workspaceId)
+          .then(this.reportNewUser.bind(this, workspaceId, data))
+          .then(() => {
+            return this.inviteUsersSync(numOfUsers - 1, data, workspaceId);
+          });
+      }
+
+      inviteUsers(data, workspaceId) {
+        if (this.syncInvite) {
+          return this.inviteUsersSync(data.numOfUsers, data, workspaceId);
+        } else {
+          return this.inviteUsersAsync(data, workspaceId);
+        }
       }
 
       createCompany(data) {

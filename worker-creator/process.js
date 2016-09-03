@@ -23,6 +23,7 @@ if (args.length < 1) {
 
 const config = {
   slowRequestMs: parseInt(args[0], 10),
+  syncInvite: args.length > 1,
   avgInfoIntervalMs: 3000,
 };
 
@@ -60,7 +61,7 @@ function start(workerId) {
   let worker;
   const requestStats = createRequestStats(requestStatsParams);
 
-  worker = new WorkerCreator(requestStats, messageQueue, staffApi, logger);
+  worker = new WorkerCreator(requestStats, messageQueue, staffApi, logger, config.syncInvite);
   worker.beginWork();
 
   process.on('SIGTERM', () => {
