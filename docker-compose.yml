@@ -32,6 +32,19 @@ services:
     links:
      - redis
 
+worker-creator-sync:
+    build: .
+    command: "npm run worker-creator-sync"
+
+    environment:
+      - REDIS_HOST=redis
+
+    depends_on:
+     - worker-activity
+
+    links:
+     - redis
+
   worker-activity:
     build: .
     command: "npm run worker-activity"
