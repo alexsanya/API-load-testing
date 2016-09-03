@@ -32,7 +32,7 @@ services:
     links:
      - redis
 
-worker-creator-sync:
+  worker-creator-sync:
     build: .
     command: "npm run worker-creator-sync"
 
