@@ -31,7 +31,8 @@
             this.logger.info(`activity request sent to client ${clientIndex}`);
             this.usersList[clientIndex].sendActivityRequest(activityConfig)
               .catch(({ err, detailInfo }) => {
-                this.logger.error('requesr error', err, detailInfo);
+                console.log(detailInfo);
+                this.logger.error('request error', err, detailInfo);
                 messageQueue.push('workerRequestError', detailInfo);
               });
           }
