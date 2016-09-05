@@ -37,6 +37,9 @@
         for (let i = 0; i < data.numOfUsers; i++) {
           usersRequests.push(this.apiConnection.inviteUser(workspaceId)
             .then(this.reportNewUser.bind(this, workspaceId, data))
+            .catch(() => {
+              return true;
+            })
           );
         }
 
@@ -49,6 +52,9 @@
         }
 
         return this.apiConnection.inviteUser(workspaceId)
+          .catch(() => {
+            return this.inviteUsersSync(numOfUsers, data, workspaceId);
+          })
           .then(this.reportNewUser.bind(this, workspaceId, data))
           .then(() => {
             return this.inviteUsersSync(numOfUsers - 1, data, workspaceId);
