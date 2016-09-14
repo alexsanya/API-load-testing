@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  module.exports = (q, WebSocket, DigestTimer, messageQueue, staffApi, ActiveUser, restify, contentProvider, activityConfig) => {
+  module.exports = (q, io, DigestTimer, messageQueue, staffApi, ActiveUser, restify, contentProvider, activityConfig) => {
 
     class WorkerActivity {
       constructor(requestStats, logger) {
@@ -15,26 +15,12 @@
         const SOCKET_PING_INTERVAL_S = 25;
         const ACTIVITY_EVENTS_INTERVAL_S = 3 * 60;
 
-        const socketPinger = new DigestTimer(
-          SOCKET_PING_INTERVAL_S,
-          QUANTUM_TIME_MS,
-          (clientIndex) => {
-            this.logger.info(`ping request sent to client ${clientIndex}`);
-            this.usersList[clientIndex].sentPingRequest();
-          }
-        );
-
         const activityEmulation = new DigestTimer(
           ACTIVITY_EVENTS_INTERVAL_S,
           QUANTUM_TIME_MS,
           (clientIndex) => {
             this.logger.info(`activity request sent to client ${clientIndex}`);
-            this.usersList[clientIndex].sendActivityRequest(activityConfig)
-              .catch(({ err, detailInfo }) => {
-                console.log(detailInfo);
-                this.logger.error('request error', err, detailInfo);
-                messageQueue.push('workerRequestError', detailInfo);
-              });
+            this.usersList[clientIndex].sendActivityRequest(activityConfig);
           }
         );
 
@@ -42,7 +28,6 @@
           this.createUser(userData).then((user) => {
             this.logger.debug('captured newUser message', user);
             this.usersList.push(user);
-            socketPinger.setNumber(this.usersList.length);
             activityEmulation.setNumber(this.usersList.length);
           });
 
@@ -50,7 +35,6 @@
         });
 
         const doDigestLoop = () => {
-          socketPinger.tick();
           activityEmulation.tick();
           setTimeout(doDigestLoop, QUANTUM_TIME_MS);
         };
@@ -59,8 +43,6 @@
       }
 
       createUser(userData) {
-        const Client = WebSocket.client;
-        const socketClient = new Client();
         const deferred = q.defer();
 
         const typeDepartment = userData.company ? 'company' : 'workspace';
@@ -79,13 +61,16 @@
           })
           .then((apiConnection) => {
             this.logger.info('user authorized');
-            let deferred = q.defer();
-            socketClient
-              .connect(`${userData.socketUrl}?token=${apiConnection.getToken()}&EIO=3&transport=websocket`);
-            socketClient.on('connect', (socketConnection) => {
+            const deferred = q.defer();
+            const socketConnection = io(userData.socketHost, {
+              path: userData.socketPath,
+              query: {token: apiConnection.getToken()},
+              transports: ['websocket']
+            });
+            socketConnection.on('connect', () => {
               deferred.resolve({apiConnection, socketConnection});
             });
-            socketClient.on('connectFailed', (error) => {
+            socketConnection.on('error', (error) => {
               this.logger.error('Socket connection error: ', error);
               console.log(error);
               deferred.reject(error);
@@ -93,14 +78,22 @@
             return deferred.promise;
           })
           .then(({apiConnection, socketConnection}) => {
-            this.logger.info('established socket connection ');
+            this.logger.info('established socket connection');
+            return apiConnection.authorization(nameDepartment).then((resp) => {
+              const companyId = resp.id;
+              return {apiConnection, socketConnection, companyId};
+            });
+          })
+          .then(({apiConnection, socketConnection, companyId}) => {
+            this.logger.info('company authorized');
             return new ActiveUser(
               apiConnection,
               socketConnection,
+              companyId,
+              nameDepartment,
               ['lazy', 'normal', 'effective'][contentProvider.getRandomInt(0, 2)]
             );
-          
-          });
+          })
       }
     }
 

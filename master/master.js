@@ -25,7 +25,8 @@ const authInfo = require('../config').auth;
   const config = {
     isDryRun: (args.length && args[0] === 'dry'),
     apiUrl: process.env.API_URL || 'http://td-rest-api.herokuapp.com:80',
-    socketUrl: process.env.SOCKET_URL || 'wss://td-rest-api.herokuapp.com/api/1.0/socket/',
+    socketHost: process.env.SOCKET_HOST || 'wss://td-rest-api.herokuapp.com',
+    socketPath: process.env.SOCKET_PATH || '/api/1.0/socket',
     testTime: parseInt(process.env.TIME, 10) || 1800,
     numberOfCompanies: parseInt(process.env.NUMBER_COMPANIES, 10) || 1,
     usersPerCompany: parseInt(process.env.NUMBER_USERS, 10) || 100,

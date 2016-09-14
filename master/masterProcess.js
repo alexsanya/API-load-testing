@@ -27,7 +27,8 @@
       const job = {
         numOfUsers: this.config.usersPerCompany,
         apiUrl: this.config.apiUrl,
-        socketUrl: this.config.socketUrl,
+        socketHost: this.config.socketHost,
+        socketPath: this.config.socketPath,
       };
 
       for (let i = 0; i < this.config.numberOfCompanies; i++) {

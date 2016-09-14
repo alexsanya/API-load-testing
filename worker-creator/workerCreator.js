@@ -24,7 +24,8 @@
           email: userData.args.email,
           company: companyId,
           apiUrl: data.apiUrl,
-          socketUrl: data.socketUrl,
+          socketHost: data.socketHost,
+          socketPath: data.socketPath,
         };
         this.logger.info('user invited', newUserData);
         this.messageQueue.push('newUser', newUserData);

@@ -1,6 +1,6 @@
 const Q = require('q');
 const uid = require('uid');
-const Websocket = require('websocket');
+const io = require('socket.io-client');
 const restify = require('restify');
 const simpleNodeLogger = require('simple-node-logger');
 const faker = require('faker');
@@ -14,7 +14,7 @@ const StaffApi = require('../lib/staffAPI');
 const ActiveUser = require('./activeUser');
 const activityConfig = require('../config');
 const WorkerActivity = require('./workerActivity')
-  (Q, Websocket, DigestTimer, messageQueue, StaffApi, ActiveUser, restify, contentProvider, activityConfig);
+  (Q, io, DigestTimer, messageQueue, StaffApi, ActiveUser, restify, contentProvider, activityConfig);
 
 const args = process.argv.slice(2);
 

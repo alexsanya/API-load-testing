@@ -8,7 +8,8 @@ services:
     environment:
       - REDIS_HOST=redis
       - API_URL=http://67.205.130.0:80
-      - SOCKET_URL=ws://67.205.130.0/api/1.0/socket/
+      - SOCKET_HOST=ws://67.205.130.0
+      - SOCKET_PATH=/api/1.0/socket
       - TIME=1800
       - NUMBER_COMPANIES=1
       - NUMBER_USERS=1000
