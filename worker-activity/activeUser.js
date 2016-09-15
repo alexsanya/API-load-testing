@@ -7,10 +7,22 @@
       this.staffApi = apiConnection;
       this.performance = performance;
       this.socketConnection = socketConnection;
+      this.headers = {
+        'Authorization': `JWT ${this.staffApi.getToken()}`,
+        'X-Company-ID': this.companyId,
+      }
       this.socketConnection.emit('subscribe', {
         users: [userId],
         company:  companyId,
         detail: ['worklog', 'timeuse']
+      });
+      this.socketConnection.emit('api', {
+        id: 'putStatus',
+        method: 'put',
+        path: '/api/1.0/status',
+        body: { mode: 'mobile' },
+        query: { company: companyId },
+        headers: this.headers,
       });
     }
 
@@ -23,10 +35,7 @@
         path: `/api/1.0/activity/${date}`,
         body: this.staffApi.getUserActivity(config, this.performance),
         query: {company: this.companyId},
-        headers: {
-          'Authorization': `JWT ${this.staffApi.getToken()}`,
-          'X-Company-ID': this.companyId,
-        }
+        headers: this.headers,
       });
     }
   }
