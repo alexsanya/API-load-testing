@@ -61,6 +61,11 @@
           })
           .then((apiConnection) => {
             this.logger.info('user authorized');
+            messageQueue.push('userLoggedIn', {
+              apiUrl: userData.apiUrl,
+              companyId: nameDepartment,
+              token: apiConnection.getToken(),
+            });
             const deferred = q.defer();
             const socketConnection = io(userData.socketHost, {
               path: userData.socketPath,

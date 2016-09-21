@@ -8,6 +8,7 @@
     "worker-creator": "node worker-creator/process.js 1000",
     "worker-creator-sync": "node worker-creator/process.js 1000 sync",
     "worker-activity": "node worker-activity/process.js 1000",
+    "worker-screenshots": "node worker-screenshots/process.js 1000",
     "test": "mocha **/spec"
   },
   "keywords": [
