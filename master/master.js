@@ -7,10 +7,11 @@ const simpleNodeLogger = require('simple-node-logger');
 const staffApi = require('../lib/staffAPI')(Q, restify);
 const messageQueue = require('../lib/messageQueue')(kue, process.env.REDIS_HOST);
 const workerGroupStats = require('../lib/workerGroupStats')(process, Q, logUpdate);
-const contentProvider = require('../lib/contentProvider')(faker);
+const globalConfig = require('../config');
+const contentProvider = require('../lib/contentProvider')(faker, globalConfig);
 const DryRunProcess = require('./dryRunProcess');
 const MasterProcess = require('./masterProcess');
-const authInfo = require('../config').auth;
+const authInfo = globalConfig.auth;
 
 (() => {
   'use strict';

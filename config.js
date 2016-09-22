@@ -86,7 +86,23 @@
           neutral: 0.25,
           productive: 0.75,
         },
-      }
+      },
+      screenShots: [
+        {
+          filename: '../screenshots/1.jpg',
+          metadata: {
+            blur: false,
+            contentType: 'image/jpeg',
+            keys: 0,
+            movements: 6,
+            period: 20,
+            quality: 30,
+            scale: 100,
+            screenNumber: 0,
+            type: "screenshot",
+          }
+        }
+      ]
   };
 
   module.exports = config;
