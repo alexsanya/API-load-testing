@@ -1,4 +1,5 @@
-module.exports = (q, log, staffApi, contentProvider) => {
+module.exports = (q, log, staffApi, contentProvider, streamBuffers) => {
+
   class ScreenshotGenerator {
     constructor(userData) {
       this.userData = userData;
@@ -15,12 +16,22 @@ module.exports = (q, log, staffApi, contentProvider) => {
           return { signedUrl, screenshot };
         })
         .then(({ signedUrl, screenshot }) => {
-          return staffApi.uploadScreenShot(signedUrl, screenshot.body);
+          return staffApi.uploadScreenShot(signedUrl.url, screenshot.content).then(() => {
+            const date = signedUrl.date;
+            const metadata = screenshot.metadata;
+            return { date, metadata };
+          });
+        })
+        .then(({ date, metadata }) => {
+          return staffApi.registerFileInSystem(this.userData.apiUrl, this.userData.companyId, this.userData.token, date, metadata);
         })
         .catch((err) => {
           log.error(err);
         });
-      });
+      })
+      .catch((err) => {
+        log.error(err);
+      })
     }
   }
 

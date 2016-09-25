@@ -92,14 +92,15 @@
           filename: '../screenshots/1.jpg',
           metadata: {
             blur: false,
+            imageSize: 84096,
+            h: 768,
+            w: 1366,
             contentType: 'image/jpeg',
-            keys: 0,
-            movements: 6,
             period: 20,
             quality: 30,
             scale: 100,
             screenNumber: 0,
-            type: "screenshot",
+            type: 'screenshot',
           }
         }
       ]
