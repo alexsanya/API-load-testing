@@ -1,6 +1,7 @@
 const q = require('q');
 const kue = require('kue');
 const faker = require('faker');
+const request = require('request');
 const restify = require('restify');
 const simpleNodeLogger = require('simple-node-logger');
 const DigestTimer = require('../lib/digestTimer');
@@ -9,7 +10,8 @@ const log = simpleNodeLogger.createSimpleLogger();
 const StaffApi = require('../lib/staffAPI')(q, restify, log);
 const globalConfig = require('../config');
 const contentProvider = require('../lib/contentProvider')(faker, globalConfig);
-const ScreenshotGenerator = require('./screenshotGenerator')(q, log, StaffApi, contentProvider);
+const ScreenShotsApi = require('../lib/screenShotsApi')(q, request, restify, StaffApi.responseHandler, log);
+const ScreenshotGenerator = require('./screenshotGenerator')(q, log, StaffApi, ScreenShotsApi, contentProvider);
 
 const SCREENSHOT_INTERVAL_S = 20;
 const QUANTUM_TIME_MS = 100;
