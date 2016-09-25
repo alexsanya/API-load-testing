@@ -55,6 +55,16 @@ services:
 
     links:
      - redis
-  
+
+  worker-screenshots:
+    build: .
+    command: "npm run worker-screenshots"
+
+    environment:
+      - REDIS_HOST=redis
+
+    links:
+     - redis
+     
   redis:
     image: redis
