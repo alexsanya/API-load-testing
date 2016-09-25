@@ -102,7 +102,37 @@
             screenNumber: 0,
             type: 'screenshot',
           }
-        }
+        },
+        {
+          filename: '../screenshots/2.jpg',
+          metadata: {
+            blur: false,
+            imageSize: 113640,
+            h: 768,
+            w: 1366,
+            contentType: 'image/jpeg',
+            period: 20,
+            quality: 30,
+            scale: 100,
+            screenNumber: 0,
+            type: 'screenshot',
+          }
+        },
+        {
+          filename: '../screenshots/3.jpg',
+          metadata: {
+            blur: false,
+            imageSize: 68388,
+            h: 768,
+            w: 1366,
+            contentType: 'image/jpeg',
+            period: 20,
+            quality: 30,
+            scale: 100,
+            screenNumber: 0,
+            type: 'screenshot',
+          }
+        },
       ]
   };
 
