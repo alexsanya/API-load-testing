@@ -13,7 +13,7 @@ const contentProvider = require('../lib/contentProvider')(faker, globalConfig);
 const ScreenShotsApi = require('../lib/screenShotsApi')(q, request, restify, StaffApi.responseHandler, log);
 const ScreenshotGenerator = require('./screenshotGenerator')(q, log, StaffApi, ScreenShotsApi, contentProvider);
 
-const SCREENSHOT_INTERVAL_S = 20;
+const SCREENSHOT_INTERVAL_S = 15*60;
 const QUANTUM_TIME_MS = 100;
 
 log.setLevel('info');
