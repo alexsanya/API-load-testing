@@ -9,7 +9,7 @@
     "worker-creator-sync": "node worker-creator/process.js 1000 sync",
     "worker-activity": "node worker-activity/process.js 1000",
     "worker-screenshots": "node worker-screenshots/process.js 1000",
-    "test": "mocha **/spec"
+    "test": "./node_modules/.bin/mocha **/spec"
   },
   "keywords": [
     "api",
@@ -22,6 +22,7 @@
     "eslint": "^3.2.2",
     "eslint-config-airbnb-base": "^5.0.1",
     "eslint-plugin-import": "^1.13.0",
+    "mocha": "^3.1.0",
     "sinon": "^1.17.5"
   },
   "dependencies": {
