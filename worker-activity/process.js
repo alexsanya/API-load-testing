@@ -63,6 +63,8 @@ function start(workerId) {
   logger.info('started');
   worker.beginWork();
 
+  messageQueue.on('shutdown', globalConfig.shutdown.bind(null, log, Q, process));
+
   process.on('SIGTERM', () => {
     logger.info('terminated');
     process.exit();

@@ -14,11 +14,12 @@ const ScreenShotsApi = require('../lib/screenShotsApi')(q, request, restify, Sta
 const ScreenshotGenerator = require('./screenshotGenerator')(q, log, StaffApi, ScreenShotsApi, contentProvider);
 
 const SCREENSHOT_INTERVAL_S = 15*60;
+const INFO_INTERVAL_S = 3;
 const QUANTUM_TIME_MS = 100;
 
 log.setLevel('info');
 
-log.info('Screenshots worker launched\n');
+log.info('Screenshots worker launched');
 
 const usersList = [];
 const screenShotsEmulation = new DigestTimer(
@@ -30,15 +31,37 @@ const screenShotsEmulation = new DigestTimer(
   }
 );
 
+const workerInfoFrame = new DigestTimer(
+  INFO_INTERVAL_S,
+  QUANTUM_TIME_MS,
+  () => {
+    messageQueue.push('statsData', {
+      info: {
+        requestsTotal: 0,
+        durationTotalMs: 0,
+        errorsType4x: 0,
+        errorsType5x: 0,
+        slowestRequestMs: 0,
+      },
+      workerId: 1,
+      workerType: 'screenshots',
+    });
+  }
+);
+
+workerInfoFrame.setNumber(1);
+
 const doDigestLoop = () => {
   screenShotsEmulation.tick();
+  workerInfoFrame.tick();
   setTimeout(doDigestLoop, QUANTUM_TIME_MS);
 };
 
 doDigestLoop();
 
+messageQueue.on('shutdown', globalConfig.shutdown.bind(null, log, q, process));
+
 messageQueue.on('userLoggedIn', (userData) => {
-console.log('New user registered', userData);
   usersList.push(new ScreenshotGenerator(userData));
   screenShotsEmulation.setNumber(usersList.length);
   log.debug('New user authorized');

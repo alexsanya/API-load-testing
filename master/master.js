@@ -32,11 +32,16 @@ const authInfo = globalConfig.auth;
     numberOfCompanies: parseInt(process.env.NUMBER_COMPANIES, 10) || 1,
     usersPerCompany: parseInt(process.env.NUMBER_USERS, 10) || 100,
     onFinish: (statsInfo) => {
-      messageQueue.shutdown((err) => {
-        log.info('Testing results:\n ', statsInfo);
-        process.stdout.write('Test finished', err || '');
-        process.exit(0);
-      });
+      const workersList = workerGroupStats.getWorkersAmount();
+      const totalWorkersNum = workersList.reduce((total, row) => {
+        return total + row.number;
+      }, 0);
+      log.info(`Total number of workers: ${totalWorkersNum}`);
+      for (let i = 0; i< totalWorkersNum; i++) {
+        messageQueue.push('shutdown');
+      }
+      log.info('Test finished');
+      setTimeout(process.exit.bind(process, 0), 500);
     },
   };
 

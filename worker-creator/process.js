@@ -65,6 +65,8 @@ function start(workerId) {
   worker = new WorkerCreator(requestStats, messageQueue, staffApi, logger, config.syncInvite);
   worker.beginWork();
 
+  messageQueue.on('shutdown', globalConfig.shutdown.bind(null, log, q, process));
+
   process.on('SIGTERM', () => {
     logger.info('termination started...');
     worker.terminate().then(() => {
@@ -73,5 +75,6 @@ function start(workerId) {
     });
   });
 }
+
 
 start(1);

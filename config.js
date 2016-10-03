@@ -133,7 +133,12 @@
             type: 'screenshot',
           }
         },
-      ]
+      ],
+      shutdown: (log, q, process) => {
+        log.info('Shuting down by master');
+        setTimeout(process.exit.bind(process, 0), 500);
+        return q.resolve();
+      },
   };
 
   module.exports = config;
